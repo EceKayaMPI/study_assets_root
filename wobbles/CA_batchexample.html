@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My experiment</title>
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response.js"></script>
+        <script src="jatos.js"></script>
+        <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body>
+
+    </body>
+    <script>
+
+    var timeVar = [];
+
+
+    var hello_trial = {
+        type: 'html-keyboard-response',
+        stimulus: 'Hello world!',
+        on_start: function (trial) {
+            // Get prolific id (url var) and the corresponding batch var from jatos and change trial stimulus....
+            var prolific_id = jatos.urlQueryParameters.prolific_id
+            var oder_of_trials = jatos.batchSession.get(prolific_id)
+            trial.stimulus='the order of trials for prolificID '+prolific_id+' is '+oder_of_trials ;
+        }
+    }
+    timeVar.push(hello_trial);
+
+    var stims4all_demo = [
+        {
+          "participant_order": 1,
+          "stimlist": [
+          {stimulus: 'stimfiles/AM_8.00_Hz_0.18dep.wav'},
+          {stimulus: 'stimfiles/AM_8.00_Hz_0.18dep.wav'},
+          {stimulus: 'stimfiles/AM_8.00_Hz_0.18dep.wav'},
+          ]
+        },
+        {
+          "participant_order": 2,
+          "stimlist": [
+          {stimulus: 'stimfiles/noise1.wav'},
+          {stimulus: 'stimfiles/noise1.wav'},
+          {stimulus: 'stimfiles/AM_4.00_Hz_0.18dep.wav'},
+          ]
+        },
+        {
+          "participant_order": 3,
+          "stimlist": [
+          {stimulus: 'stimfiles/noise1.wav'},
+          {stimulus: 'stimfiles/noise1.wav'},
+          {stimulus: 'stimfiles/noise1.wav'},
+          ]
+        },
+
+    ];
+
+    console.log(stims4all_demo)
+
+
+    // TRIALS -----------------------------------------------------------------
+    var test_trials = {
+      type: 'audio-keyboard-response',
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      choices: ['w', 'n'],
+      prompt: '<p style="font-size:60px;">+</p>',
+      response_ends_trial: true,
+      trial_duration:1050,
+    }
+    var test_procedure = {
+      timeline: [test_trials],
+      timeline_variables: audio_stims,
+      repetitions: 1,
+      randomize_order: true,
+    }
+    timeVar.push(test_procedure);
+
+
+    var end_trial = {
+        type: 'html-keyboard-response',
+        stimulus: 'Thanks....'
+    }
+    timeVar.push(end_trial);
+
+
+    // To call the experiment, crate a general multiplr worker batch and add the prolific_id as url var (or let that prolific do for you later, first test with fake ids).
+    // Mine looks like:
+    // http://127.0.0.1:9000/publix/65/start?batchId=66&generalMultiple&prolific_id=1234567
+
+    function init_experiment(){
+        jsPsych.init({
+            timeline: timeVar,
+            on_finish: function() {
+                    var resultJson = jsPsych.data.get().json();
+                    jatos.submitResultData(resultJson, jatos.startNextComponent);
+                }
+        })
+    }
+
+    jatos.onLoad(function () {
+        // Extract url var (here prolific_id)
+        var prolific_id=jatos.urlQueryParameters.prolific_id
+
+        if (prolific_id) {
+            // SECOND SESSION OLD PARTICIPANT
+            // check batch session var with prolific_id as key exist
+            if (jatos.batchSession.find('/'+prolific_id)) {
+                // If, start experiment
+                var batchSession = jatos.batchSession.getAll();
+
+
+
+
+            } else {
+                // FIRST SESSION NEW PARTICIPANT
+                // create new batch var with prolific_id as key
+
+                // count how many participants have attended & recorded in batch
+                var batchSession = jatos.batchSession.getAll();
+                var count = Object.keys(batchSession).length;
+                console.log(count);
+
+                // take the next available list (not taken yet)
+                var audio_stims = stims4all_demo[count+1].stimlist;
+                console.log(audio_stims)
+                // start experiment
+                //init_experiment();
+
+
+                order_of_trials = Array(5).fill().map(() => Math.round(Math.random() * 5)); // creat randfom number array
+
+
+                var promise = jatos.batchSession.add('/'+prolific_id, order_of_trials); // add to session batch
+
+                promise.done(() => {
+                        // when batch var is saved successfully log and start experiment
+
+                        // DEBUG: Display all Batch vars in log
+                        var batchSession = jatos.batchSession.getAll();
+                        console.log(batchSession);
+
+                        init_experiment();
+                    });
+            }
+
+
+        } else {
+            alert('no prolific id given!')
+            jatos.abortStudy();
+        }
+
+
+
+    });
+    </script>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="jatos.js"></script>
+  <script src="ToneY.js"></script>
+
+  <script src="jspsych-6.1.0/jspsych.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-WOB-slider-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+
+</head>
+<body></body>
+<script>
+
+var timeVar = [];
+// wob slider test  ----------------------------------------------------
+var sliderInstruc = {
+      type: 'html-button-response',
+      stimulus:
+      '<p>In the following section, you will hear continuous sounds.</p>'+
+      '<p>Move the slider to make them wobble at a rate that you like the most.</p>',
+      choices: ['Continue']
+    };
+var sliderTrialmax = {
+    type: 'WOB-slider-response',
+    min: 0,
+    max: 15,
+    step: 0.01,
+    start: 15,
+    labels: ['slow', 'fast'],
+    prompt: '<p>Please set the wobbles to your preferred speed.</p>',
+    slider_width: 300,
+    require_movement: true,
+};
+var sliderTrialmin = {
+    type: 'WOB-slider-response',
+    min: 0,
+    max: 15,
+    step: 0.01,
+    start: 0,
+    labels: ['slow', 'fast'],
+    prompt: '<p>Please set the wobbles to your preferred speed.</p>',
+    slider_width: 300,
+    require_movement: true,
+};
+var sliderTrials = {
+  timeline: [sliderTrialmax, sliderTrialmin],
+  repetitions: 3,
+  randomize_order: true,
+}
+timeVar.push(sliderInstruc);
+timeVar.push(sliderTrials);
+
+var thxbye = {
+      type: 'html-button-response',
+      stimulus: '<p style="font-size:30px;">Thank you!</p>' +
+      '<p>You have completed the experiment.</p>'+
+      '<p>Click <strong>continue</strong> to close.</p>',
+      choices: ['Continue']
+    };
+timeVar.push(thxbye);
+
+jatos.onLoad(function() {
+      jsPsych.init({
+        timeline: timeVar,
+        show_progress_bar: false,
+        use_webaudio: false,
+        on_close: function() {
+          var resultCSV = jsPsych.data.get().csv();
+          var promise = jatos.uploadResultFile(resultCSV, 'datacik_closed.csv');
+        },
+
+          on_finish: function() {
+            var resultCSV = jsPsych.data.get().csv();
+            var promise = jatos.uploadResultFile(resultCSV, 'dataciklar.csv');
+            promise.done(() => { alert("File was successfully uploaded") });
+            promise.fail(() => { alert("File upload failed") });
+        },
+
+        default_iti: 600
+      });
+});
+
+</script>
+
+</html>

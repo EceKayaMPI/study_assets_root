@@ -1,0 +1,24 @@
+.hc-buttonset-vertical label{
+  display: block;
+}
+.hc-trial-div {
+  border: 5px solid black;
+  display: table;
+  padding: 30px;
+  margin: 15px;
+}
+.hc-calibration-div {
+  position: relative;
+  width: 40%;
+  margin: 15px;
+}
+
+
+
+.hc-instruction {
+  line-height: 1.8;
+}
+
+.hc-radio-label {
+  line-height: 1.8;
+}
