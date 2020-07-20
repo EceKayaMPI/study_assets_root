@@ -34,7 +34,6 @@
     // console.log(audio_stims)
 
     // TRIALS -----------------------------------------------------------------
-
     // var test_trials = {
     //   type: 'audio-keyboard-response',
     //   stimulus: jsPsych.timelineVariable('stimulus'),
@@ -43,6 +42,7 @@
     //   response_ends_trial: true,
     //   trial_duration:1050,
     // }
+
     // var test_procedure = {
     //   timeline: [test_trials],
     //   timeline_variables: audio_stims,
@@ -58,9 +58,6 @@
     }
     timeVar.push(end_trial);
 
-    // To call the experiment, crate a general multiplr worker batch and add the prolific_id as url var (or let that prolific do for you later, first test with fake ids).
-    // Mine looks like:
-    // http://127.0.0.1:9000/publix/65/start?batchId=66&generalMultiple&prolific_id=1234567
 
     function init_experiment(){
 
@@ -87,27 +84,17 @@
 // existing ID
             if (jatos.batchSession.find('/'+prolific_id)) {
                 // If, start experiment
-                // AIM: If ID exists >>> find participant order in stims4all_demo and select that stim order
+                // AIM: find participant order in stims4all_demo and select that stim order in the experiment
                 init_experiment();
 // new ID
             } else {
-
+                // count existing participants
                 var batchSession = jatos.batchSession.getAll();
                 var pt_index = Object.keys(batchSession).length;
-
-
-                // if not create new batch var with prolific_id as key
-                // Cornelius creates an array HERE..
-                // AIM: instead of random order_of_trials variable, read the stims4all_demo variable and select row based on participant order
-                // order_of_trials = Array(5).fill().map(() => Math.round(Math.random() * 5)); // creat randfom number array
-                // var promise = jatos.batchSession.add('/'+prolific_id, order_of_trials); // add to session batch
+                // add new ID to session data
                 var promise = jatos.batchSession.add('/'+prolific_id, pt_index);
+                // if added, start experiment
                 promise.done(() => {
-                  // count existing participants INCLDUDING current participant
-                        // when batch var is saved successfully LOG and
-                        // var batchSession = jatos.batchSession.getAll();
-                        // console.log(batchSession);
-                        // START EXPERIMENT
                         init_experiment();
                     });
             }
@@ -116,7 +103,7 @@
             alert('no prolific id given!')
             jatos.abortStudy();
         }
-
     });
+
     </script>
 </html>
