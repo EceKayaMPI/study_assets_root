@@ -40,23 +40,20 @@
         var current_particip = getPROid();
         var audio_stims = stims4all_demo[current_particip].stimlist;
         infos.push(audio_stims)
-        infos.push(audio_stims)
-        infos.push(audio_stims)
       },
 
-      stimulus: audio_stims,
+      stimulus: audio_stims, // I NEED THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ?
       choices: ['w', 'n'],
       prompt: '<p style="font-size:60px;">+</p>',
       response_ends_trial: true,
       trial_duration:1050,
     }
 
-  console.log(infos);
-
+  console.log(infos); // SHOWS AS EMPTY <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< !
   timeVar.push(test_trials);
 
 
-    function init_experiment(infos, x){
+    function init_experiment(){
 
         // HOW do I pass pt_index into the experiment as a global variable??? <<<<<<<<<<<<<<<<<<<<<<<<< ?
 
