@@ -14,9 +14,6 @@
     </body>
     <script>
 
-    //const infos = [];
-
-
     function getPROid() {
       var prolific_id = jatos.urlQueryParameters.prolific_id
       var pt_index = jatos.batchSession.get(prolific_id)
@@ -40,6 +37,7 @@
         var current_particip = getPROid();
         var audio_stims = stims4all_demo[current_particip].stimlist;
         infos.push(audio_stims)
+        console.log(infos); // SHOWS CONTENTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       },
 
       stimulus: audio_stims, // I NEED THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ?
@@ -65,7 +63,7 @@
             }
         })
     }
-
+    
     jatos.onLoad(function () {
         // Extract url var (here prolific_id)
         var prolific_id=jatos.urlQueryParameters.prolific_id
