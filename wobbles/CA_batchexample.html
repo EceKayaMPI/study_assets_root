@@ -26,28 +26,26 @@
 
         var end_trial = {
             type: 'html-keyboard-response',
-            stimulus: 'Thanks....'
+            on_start: function () {
+              var current_particip = getPROid();
+              audio_stims.push(stims4all_demo[current_particip].stimlist);
+              console.log(audio_stims[0]) // SHOWS CONTENTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< !
+            },
+            stimulus: 'hiiiii....'
         }
         timeVar.push(end_trial);
 
     //TRIALS -----------------------------------------------------------------
     var test_trials = {
       type: 'audio-keyboard-response',
-      on_start: function () {
-        var current_particip = getPROid();
-        var audio_stims = stims4all_demo[current_particip].stimlist;
-        infos.push(audio_stims)
-        console.log(infos); // SHOWS CONTENTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      },
-
-      stimulus: audio_stims, // I NEED THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ?
+      timeline: audio_stims, // I NEED THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ?
       choices: ['w', 'n'],
       prompt: '<p style="font-size:60px;">+</p>',
       response_ends_trial: true,
       trial_duration:1050,
     }
 
-  console.log(infos); // SHOWS AS EMPTY <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< !
+  console.log(audio_stims); // SHOWS AS EMPTY <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< !
   timeVar.push(test_trials);
 
 
@@ -63,7 +61,7 @@
             }
         })
     }
-    
+
     jatos.onLoad(function () {
         // Extract url var (here prolific_id)
         var prolific_id=jatos.urlQueryParameters.prolific_id

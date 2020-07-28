@@ -36,20 +36,6 @@ var audio_files = [
     "stimfiles/AM_4.00_Hz_0.09dep.wav",
 ];
 
-//
-//
-//
-//var trial_index_list = [1,2,3]
-// var promise = jatos.batchSession.add("/subjects/2", {id: 123, name: "Max"});
-// promise.done(() => { alert("Batch Session was successfully updated") });
-// promise.fail(() => { alert("Batch Session synchronization failed") });
-//if (typeof(jatos.batchSession.get(id)) !== "undefined") {
-  // This ID exists in the batch data. Get the trial index array for this participant.
-//  trial_index_list = jatos.batchSession.get(id);
-//}
-
-// other variables -- >>> most at external json
-
 var SMT_stop = {
       type: 'html-button-response',
       stimulus:
@@ -61,28 +47,21 @@ var SMT_procedure = {
   repetitions: 1,
   randomize_order: false,
 }
-timeVar.push(SMT_procedure);
-
-
-
+//timeVar.push(SMT_procedure);
 
 
 // TRIALS -----------------------------------------------------------------
 var test_trials = {
   type: 'audio-keyboard-response',
-  stimulus: jsPsych.timelineVariable('stimulus'),
+  //stimulus: jsPsych.timelineVariable('stimulus'),
+  timeline: audio_stims,
   choices: ['w', 'n'],
   prompt: '<p style="font-size:60px;">+</p>',
   response_ends_trial: true,
   trial_duration:1050,
 }
-var test_procedure = {
-  timeline: [test_trials],
-  timeline_variables: audio_stims,
-  repetitions: 1,
-  randomize_order: true,
-}
-timeVar.push(test_procedure);
+
+timeVar.push(test_trials);
 
 
 // kay byeeeeee  ----------------------------------------------------
@@ -100,17 +79,6 @@ timeVar.push(thxbye);
 
 jatos.onLoad(function() {
 
-      var urlstuff = jatos.urlQueryParameters;
-      console.log(urlstuff);
-
-      if (urlstuff.PROLIFIC_PID === "{{ececik}}") {
-        var x = 666;
-      } else {
-        var x = 333;
-      }
-      console.log(x)
-
-
       jsPsych.init({
         timeline: timeVar,
         use_webaudio: false,
@@ -126,7 +94,7 @@ jatos.onLoad(function() {
           // promise.done(() => { alert("File was successfully uploaded") });
           // promise.fail(() => { alert("File upload failed") });
           var resultJson = jsPsych.data.get().json();
-          jatos.studySessionData["subject_id"] = subject_id;
+          // jatos.studySessionData["subject_id"] = subject_id;
           jatos.submitResultData(resultJson, jatos.startNextComponent);
 
         },
