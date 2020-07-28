@@ -11,7 +11,7 @@
     </head>
     <body>
 
-    </body>
+
     <script>
 
     function getPROid() {
@@ -21,39 +21,47 @@
     }
 
     var timeVar = [];
-    var audio_stims = [];
-    var infos = [];
+    var audio_stims = [8765456789];
+    var stimz = [];
 
         var end_trial = {
             type: 'html-keyboard-response',
-            on_start: function () {
-              var current_particip = getPROid();
-              audio_stims.push(stims4all_demo[current_particip].stimlist);
-              console.log(audio_stims[0]) // SHOWS CONTENTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< !
-            },
+            // on_start: function () {
+            //   var current_particip = getPROid();
+            //   audio_stims.push(stims4all_demo[current_particip].stimlist);
+            //   console.log(audio_stims[0]) // SHOWS CONTENTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< !
+            // },
             stimulus: 'hiiiii....'
         }
         timeVar.push(end_trial);
 
-    //TRIALS -----------------------------------------------------------------
-    var test_trials = {
-      type: 'audio-keyboard-response',
-      timeline: audio_stims, // I NEED THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ?
-      choices: ['w', 'n'],
-      prompt: '<p style="font-size:60px;">+</p>',
-      response_ends_trial: true,
-      trial_duration:1050,
-    }
+    // //TRIALS -----------------------------------------------------------------
+    // var test_trials = {
+    //   type: 'audio-keyboard-response',
+    //   timeline: stimz, // I NEED THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ?
+    //   choices: ['w', 'n'],
+    //   prompt: '<p style="font-size:60px;">+</p>',
+    //   response_ends_trial: true,
+    //   trial_duration:1050,
+    // }
 
-  console.log(audio_stims); // SHOWS AS EMPTY <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< !
-  timeVar.push(test_trials);
+
+   var subj_ID = jsPsych.data.getURLVariable('prolific_id')
+   console.log(subj_ID)
 
 
     function init_experiment(){
 
-        // HOW do I pass pt_index into the experiment as a global variable??? <<<<<<<<<<<<<<<<<<<<<<<<< ?
+        // // HOW do I pass pt_index into the experiment as a global variable??? <<<<<<<<<<<<<<<<<<<<<<<<< ?
+        // var prolific_id = jatos.urlQueryParameters.prolific_id
+        // var pt_index = jatos.batchSession.get(prolific_id)
+        // var stimz =[]
+        // stimz.push(stims4all_demo[pt_index].stimlist);
+        // console.log(stimz[0])
+        // return stimz
 
         jsPsych.init({
+
             timeline: timeVar,
             on_finish: function() {
                     var resultJson = jsPsych.data.get().json();
@@ -90,6 +98,7 @@
         }
 
     });
+        </script>
+    </body>
 
-    </script>
 </html>
