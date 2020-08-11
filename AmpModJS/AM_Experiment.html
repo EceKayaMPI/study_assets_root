@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Experiment </title>
+  <script src="ToneY.js"></script>
+  <script src="jatos.js"></script>
+  <script src="AMJS_INFO_ALL.js"></script>
+  <script src="AMJS_audiofiles.js"></script>
+  <script src="jspsych-6.1.0/jspsych.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-WOB-slider-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-button-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-responseSSS.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+</head>
+<body></body>
+<script>
+
+var wobaudio = new Audio("stimfiles/wobb_ex.wav");
+var noisaudio = new Audio("stimfiles/noise_ex.wav");
+var volaudio = new Audio("stimfiles/setVol_ex.wav");
+
+function playVol(audio) {
+  audio.play();
+};
+
+  jatos.onLoad(function() {
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    function init_experiment() {
+
+      // VARIABLES ==================================================================
+      // amjs_infovar @ AMJS_INFO_ALL.js
+      // audio_files @ AMJS_audiofiles.js
+
+      var prolific_id = jatos.urlQueryParameters.prolific_id
+      var pt_index = jatos.batchSession.get(prolific_id)
+      console.log(pt_index)
+
+      var current_participant = amjs_infovar[pt_index];
+      var audio_stims_1 = current_participant.stims_1
+      var audio_stims_2 = current_participant.stims_2
+      // console.log(audio_stims_1);
+      // console.log(audio_stims_2);
+
+      var participant_info = [];
+      participant_info.pro_ID = prolific_id;
+      participant_info.pt_index = pt_index;
+      console.log(participant_info)
+
+      var timeVar = [];
+
+      var id_check = {
+        type: 'html-button-response',
+        choices: ['Continue', 'Abort'],
+        stimulus: 'Prolific ID detected: '+prolific_id+' if incorrect, click abort',
+        on_finish: function(data) {
+          if (data.button_pressed == 1) {
+            jatos.abortStudy();
+            }
+          },
+        }
+        timeVar.push(id_check)
+
+
+      // general instructions etc -------------------------------- << pages
+      var welcomePage = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">WELCOME!</p><br>' +
+          '<p>In this experiment, you will be asked to perform three kinds of tasks.</p>' +
+          '<p>First, you will be asked to tap on the keyboard witout listening to any sound. </p>' +
+          '<p>Then, you will be instructed about the experiment where you will hear sounds and press keys accordingly.</p>' +
+          '<p>Finally, you will be asked to adjust some properties of the incoming sounds by moving a slider.</p>' +
+          '<p>The whole procedure is expected to take 60 minutes.<br><br><br></p>',
+        choices: ['Continue']
+      }
+
+      // SMT trials --------------------------------------- << 30 taps
+      var tapSMTinstruc = {
+        type: 'html-button-response',
+        stimulus: '<pstyle="font-size:20px;">FREE TAPPING</p><br>' +
+          '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
+          '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+          '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+          '<p>Click continue when you are ready. </p>',
+        choices: ['Continue']
+      };
+      var tapSMTcomfy = {
+        type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
+        stimulus: 'silence.wav',
+        choices: 't',
+        prompt: "<p>Please tap on the T key regularly, at a rate that is the most comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        //trial_duration: 10000,
+        post_trial_gap: 500,
+      };
+      var tapSMTfast = {
+        type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
+        stimulus: 'silence.wav',
+        choices: 't',
+        prompt: "<p>Please tap on the T key regularly, at the FASTEST rate that is comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        //trial_duration: 10000,
+        post_trial_gap: 500,
+      };
+      var tapSMTslow = {
+        type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
+        stimulus: 'silence.wav',
+        choices: 't',
+        prompt: "<p>Please tap on the T key regularly, at the SLOWEST rate that is comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        //trial_duration: 10000,
+        post_trial_gap: 500,
+      };
+      var SMT_stop = {
+        type: 'html-button-response',
+        stimulus: '<p>You can stop tapping.</p>',
+        choices: ['Continue']
+      }
+      var SMT_procedure = {
+        timeline: [tapSMTinstruc, tapSMTcomfy, SMT_stop, tapSMTfast, SMT_stop, tapSMTslow, SMT_stop],
+        repetitions: 1,
+        randomize_order: false,
+      }
+
+      var tapSMTrepeat = {
+        type: 'html-button-response',
+        stimulus: '<pstyle="font-size:20px;">FREE TAPPING</p><br>' +
+          '<p>Now, you will be asked to repeat the free tapping task you completed before. </p>' +
+          '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+          '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+          '<p>Click continue when you are ready. </p>',
+        choices: ['Continue']
+      };
+      var SMT_repeat = {
+        timeline: [tapSMTrepeat, tapSMTcomfy, SMT_stop, tapSMTfast, SMT_stop, tapSMTslow, SMT_stop],
+        repetitions: 1,
+        randomize_order: false,
+      }
+
+      // instructions etc ---------------------------------------
+
+      var instrucPages = {
+        type: 'instructions', // modified >> pauses wobaudio, noisaudio...
+        pages: [
+          '<p>Now, please turn down your volume and then click the button below.<br></p>' +
+          '<button onclick="playVol(volaudio)"> play sound </button>' +
+          '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
+          '<p style="color:#FF0000";>Please keep in mind that you should not change the volume throughout the experiment !</p>' +
+          '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
+          '<p>Once it is set, click next.<br><br></p>',
+
+          '<p>In the following section, you will hear different sounds.</p>' +
+          '<p>Some sounds will be pure NOISE, and some sounds will have fluctations in amplitude, which we will call WOBBLES.</p>' +
+
+          '<div style="width: 900px; height: 500px;">' +
+
+          '<div style="float: left; width: 300px;">' +
+          '<p>Click on the N buttton to hear an example NOISE sound. </p>' +
+          '<img src="key_n.png" onclick="playVol(noisaudio)"></img>' +
+          '<p>When you hear this, press N key.</p></div>' +
+
+          '<div style="float: right; width: 300px;">' +
+          '<p>Click on the W buttton to hear an example WOBBLE sound. </p>' +
+          '<img src="key_w.png" onclick="playVol(wobaudio)"></img>' +
+          '<p>When you hear this or its variations, press W key.</p></div>' +
+
+          '</div>' +
+
+          '<div><p>If you understood the task, <strong style="color: red;">click next to start the experiment.</strong><br></p></div>',
+
+        ],
+        show_clickable_nav: true
+      };
+
+      // Test TRIALS ---------------------------------------------------------------
+      var test_trials_1 = {
+        type: 'audio-keyboard-response', //modified version >> see git history
+        timeline: audio_stims_1,
+        choices: ['w', 'n'],
+        prompt: '<p style="font-size:60px;">+</p>',
+        response_ends_trial: true,
+        trial_duration: 1050, //to wait even if resp is made!
+      }
+
+      // Other trials ---------------------------------------------------------------
+      var sectDone = {
+        type: 'html-button-response',
+        stimulus: '<p>You have completed this section. Click continue to proceed. </p>',
+        choices: ['Continue']
+      };
+      var break_trial = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">Break!</p>' +
+          '<p><br>Click <strong>continue</strong> to proceed.</p>',
+        choices: ['Continue']
+      }
+      var thxbye = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">Thank you!</p>' +
+          '<p>You have completed the experiment.</p>' +
+          '<p>Click <strong>continue</strong> to close.</p>',
+        choices: ['Continue']
+      };
+
+      // WOB-slider trials  ----------------------------------------------------
+      var sliderInstruc = {
+        type: 'html-button-response',
+        stimulus: '<p>In the following section, you will hear continuous sounds.</p>' +
+          '<p>Move the slider to make them wobble at a rate that you like the most.</p>',
+        choices: ['Continue']
+      };
+      var sliderTrialmax = {
+        type: 'WOB-slider-response',
+        min: 0,
+        max: 15,
+        step: 0.01,
+        start: 15,
+        labels: ['slow', 'fast'],
+        prompt: '<p>Please set the wobbles to your preferred speed.</p>',
+        slider_width: 300,
+        require_movement: true,
+      };
+      var sliderTrialmin = {
+        type: 'WOB-slider-response',
+        min: 0,
+        max: 15,
+        step: 0.01,
+        start: 0,
+        labels: ['slow', 'fast'],
+        prompt: '<p>Please set the wobbles to your preferred speed.</p>',
+        slider_width: 300,
+        require_movement: true,
+      };
+      var sliderTrials = {
+        timeline: [sliderTrialmax, sliderTrialmin],
+        repetitions: 3,
+        randomize_order: true,
+      }
+
+      // PROCEDURE =============================================================
+      timeVar.push(welcomePage);
+      //timeVar.push(SMT_procedure);
+      timeVar.push(sectDone);
+      timeVar.push(instrucPages);
+      //timeVar.push(test_procedure);
+      //timeVar.push(break_trial);
+      //timeVar.push(test_procedure); // NOT the same list. randomizes again!
+      //timeVar.push(sectDone);
+      //timeVar.push(sliderInstruc);
+      //timeVar.push(sliderTrials);
+      //timeVar.push(SMT_repeat);
+      timeVar.push(sectDone);
+      // timeVar.push(SMT_repeat);
+      // timeVar.push(sectDone);
+      timeVar.push(thxbye);
+
+      // EXPERIMENT INIT =======================================================
+      jsPsych.init({
+        timeline: timeVar,
+        on_close: function() {
+          var resultCSV = jsPsych.data.get().csv();
+          var closed_data = jatos.uploadResultFile(resultCSV, 'data_closed.csv');
+        },
+          on_finish: function() {
+            var interaction_data = jsPsych.data.getInteractionData();
+            jatos.uploadResultFile(interaction_data, 'interac.csv');
+            var resultCSV = jsPsych.data.get().csv();
+            var full_data = jatos.uploadResultFile(resultCSV, 'data.csv');
+            jatos.startNextComponent();
+        },
+      })
+    } // end of init_experiment function
+    // (set up variables + initiate experiment)
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    // JATOS STUFF (get participant code and run init_experiment accordingly)
+    // ! init_experiment is defined above but runs after these lines !!!!
+
+    // Extract url var (here prolific_id)
+    var prolific_id = jatos.urlQueryParameters.prolific_id
+    if (prolific_id) {
+
+      // IF existing ID
+      if (jatos.batchSession.find('/' + prolific_id)) {
+        init_experiment();
+
+        // IF new ID
+      } else {
+
+        // count existing participants
+        var batchSession = jatos.batchSession.getAll();
+        var pt_index = Object.keys(batchSession).length;
+
+        // add new ID to session data
+        var promise = jatos.batchSession.add('/' + prolific_id, pt_index);
+        // if added, start experiment
+        promise.done(() => {
+          init_experiment();
+        });
+      }
+    } else {
+      alert('no prolific id given!')
+      jatos.abortStudy();
+    }
+
+  });
+</script>
+
+</html>
