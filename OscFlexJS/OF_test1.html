@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> OscFlex JS test </title>
+  <script src="jspsych-6.1.0/jspsych.js"></script>
+  <script src="OFJS_PID_3s.js"></script>
+  <script src="OFJS_audiofiles.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response-TAP.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response-ITI.js"></script>
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+</head>
+
+<body></body>
+<script>
+  var timeVar = [];
+
+  var prac_info = [
+  	{
+  		"participant_order":1,
+  		"pracvars":[
+  			{
+  				stimulus:'of_stims/OF_300ms.wav',
+  				prac_ioi:300
+  			},
+  			{
+  				stimulus:'of_stims/OF_500ms.wav',
+  				prac_ioi:500
+  			},
+  			{
+  				stimulus:'of_stims/OF_800ms.wav',
+  				prac_ioi:800
+  			}
+      ]}]
+
+  var curr_prac = prac_info[0].pracvars;
+  // console.log(curr_prac);
+
+  function calc_ioi_med (arr) {
+      var diff = new Array(arr.length-1);
+      for (var i=0; i<arr.length-1; i++) {
+          diff[i] = arr[i+1] - arr[i];
+      }
+
+      var sum = diff.reduce((sum, val) => (sum += val));
+      var len = diff.length;
+      var arrSort = diff.sort();
+      var mid = Math.ceil(diff.length / 2);
+      var median = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
+
+      return Math.round(median/1000);
+  }
+
+  var practice_procedure = {
+    timeline: [{
+        type: 'jspsych-audio-keyboard-response-TAP',
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: 't',
+        prompt: "<p> + </p>",
+        response_ends_trial: false,
+        trial_ends_after_audio: true
+      }
+      // { // intertrial intv
+      //   type: 'html-keyboard-response-ITI',
+      //   stimulus: '+',
+      //   trial_duration: 5000,
+      //   choices: jsPsych.NO_KEYS
+      // },
+    ],
+    timeline_variables: curr_prac,
+    randomize_order: false,
+
+    on_finish: function(data){
+      var curr_stim_ioi = parseInt(data.stimulus.substr(12,3));
+      // console.log(curr_stim_ioi);
+
+      if (data.tap_times === undefined || data.tap_times.length == 0) {
+        // array empty or does not exist
+        alert('no taps!');
+
+      } else {
+        if (data.tap_times.length < 9) {
+        alert('not enough number of taps!');
+      };
+      var tap_ioi = calc_ioi_med(data.tap_times);
+      console.log(tap_ioi);
+
+      if (tap_ioi > curr_stim_ioi*1.2) {alert('too slow!');}
+      if (tap_ioi < curr_stim_ioi*0.8) {alert('too fast!');}
+      }
+
+
+    }
+  }
+
+  var current_participant = info_OFJS_PID[0];
+  var timeline_pt1 = current_participant.timevars_part1;
+  var timeline_pt2 = current_participant.timevars_part2;
+
+  var trial_iti_procedure = {
+    timeline: [{
+        type: 'jspsych-audio-keyboard-response-TAP',
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: 't',
+        prompt: "<p> + </p>",
+        response_ends_trial: false,
+        trial_ends_after_audio: true
+      },
+      { // intertrial intv
+        type: 'html-keyboard-response-ITI',
+        stimulus: '+',
+        trial_duration: jsPsych.timelineVariable('iti'),
+        choices: jsPsych.NO_KEYS
+      },
+
+    ],
+
+    timeline_variables: timeline_pt1,
+    randomize_order: false,
+  }
+
+  var instruc = {
+    type: 'html-button-response',
+    stimulus: '<pstyle="font-size:20px;">WELCOME</p><br>' +
+      '<p> sdfghjhgfds </p>' +
+      '<p> asdfghygtfds </p>' +
+      '<p> sdfgfdsdfgbn </p>' +
+      '<p>Click continue when you are ready. </p>',
+    choices: ['Continue']
+  };
+
+  timeVar.push(instruc)
+  timeVar.push(practice_procedure)
+  timeVar.push(instruc)
+
+
+  jsPsych.init({
+    timeline: timeVar, //use timeVar as timeline
+    use_webaudio: false,
+    preload_audio: audio_files,
+    on_close: function() {
+      //jsPsych.data.displayData();
+      // jsPsych.data.get().localSave('csv','OFJS_test_closed.csv');
+    },
+    on_finish: function() {
+      //jsPsych.data.displayData();
+      jsPsych.data.get().localSave('csv', 'OFJS_test.csv');
+    },
+  });
+</script>
+
+</html>
