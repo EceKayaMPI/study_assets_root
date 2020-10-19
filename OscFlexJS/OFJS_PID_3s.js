@@ -1,6 +1,20 @@
 var info_OFJS_PID = [
 	{
 		"participant_order":1,
+		"pracvars":[
+			{
+				stimulus:'of_stims/OF_300ms.wav',
+				prac_ioi:300
+			},
+			{
+				stimulus:'of_stims/OF_500ms.wav',
+				prac_ioi:500
+			},
+			{
+				stimulus:'of_stims/OF_800ms.wav',
+				prac_ioi:800
+			}
+		],
 		"timevars_part1":[
 			{
 				stimulus:'of_stims/OF_684ms.wav',
@@ -1612,6 +1626,20 @@ var info_OFJS_PID = [
 	},
 	{
 		"participant_order":2,
+		"pracvars":[
+			{
+				stimulus:'of_stims/OF_300ms.wav',
+				prac_ioi:300
+			},
+			{
+				stimulus:'of_stims/OF_500ms.wav',
+				prac_ioi:500
+			},
+			{
+				stimulus:'of_stims/OF_800ms.wav',
+				prac_ioi:800
+			}
+		],
 		"timevars_part1":[
 			{
 				stimulus:'of_stims/OF_300ms.wav',
