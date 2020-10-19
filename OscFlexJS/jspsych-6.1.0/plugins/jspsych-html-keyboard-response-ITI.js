@@ -48,7 +48,10 @@ jsPsych.plugins["html-keyboard-response-ITI"] = (function() {
         default: null,
         description: 'How long to show trial before it ends.'
       },
-
+      bg_color: {
+        default: '#008080',
+        description: 'color to show'
+      },
     }
   }
 
@@ -63,7 +66,7 @@ jsPsych.plugins["html-keyboard-response-ITI"] = (function() {
 
     // draw
     display_element.innerHTML = new_html;
-    document.body.style.backgroundColor = '#008080';
+    document.body.style.backgroundColor = trial.bg_color;
 
     // store response
     var response = {

@@ -17,17 +17,17 @@
 
 <body></body>
 <script>
-// JATOS STUFF HERE ========================================================
+  // JATOS STUFF HERE ========================================================
 
 
 
 
 
-// FUNCTIONS ========================================================
-function calc_ioi_med (arr) {
-    var diff = new Array(arr.length-1);
-    for (var i=0; i<arr.length-1; i++) {
-        diff[i] = arr[i+1] - arr[i];
+  // FUNCTIONS ========================================================
+  function calc_ioi_med(arr) {
+    var diff = new Array(arr.length - 1);
+    for (var i = 0; i < arr.length - 1; i++) {
+      diff[i] = arr[i + 1] - arr[i];
     }
 
     var sum = diff.reduce((sum, val) => (sum += val));
@@ -36,15 +36,18 @@ function calc_ioi_med (arr) {
     var mid = Math.ceil(diff.length / 2);
     var median = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
 
-    return Math.round(median/1000);
-}
-function playVol(audio) {
-  audio.play();
-};
+    return Math.round(median / 1000);
+  }
+  function playVol(audio) {
+    audio.play();
+  };
+  // write a func that checks notgoodgottago var and aborts study
 
 
-// VARIABLES ========================================================
+  // VARIABLES ========================================================
   var timeVar = [];
+
+  var nogoodgottago = 0;
   var volaudio = new Audio("setVol_ex.wav");
 
   var current_participant = info_OFJS_PID[0];
@@ -52,90 +55,59 @@ function playVol(audio) {
   var timeline_pt2 = current_participant.timevars_part2;
   var curr_prac = current_participant.pracvars;
 
-
-
-  var practice_procedure = {
-    timeline: [{
-        type: 'jspsych-audio-keyboard-response-TAP',
-        stimulus: jsPsych.timelineVariable('stimulus'),
-        choices: 't',
-        prompt: "<p> + </p>",
-        response_ends_trial: false,
-        trial_ends_after_audio: true
-      }
-      // { // intertrial intv
-      //   type: 'html-keyboard-response-ITI',
-      //   stimulus: '+',
-      //   trial_duration: 5000,
-      //   choices: jsPsych.NO_KEYS
-      // },
-    ],
-    timeline_variables: curr_prac,
-    randomize_order: false,
-
-    on_finish: function(data){
-      var curr_stim_ioi = parseInt(data.stimulus.substr(12,3));
-      // console.log(curr_stim_ioi);
-
-      if (data.tap_times === undefined || data.tap_times.length == 0) {
-        // array empty or does not exist
-        alert('no taps!');
-
-      } else {
-        if (data.tap_times.length < 9) {
-        alert('not enough number of taps!');
-      };
-      var tap_ioi = calc_ioi_med(data.tap_times);
-      console.log(tap_ioi);
-
-      if (tap_ioi > curr_stim_ioi*1.2) {alert('too slow!');}
-      if (tap_ioi < curr_stim_ioi*0.8) {alert('too fast!');}
-      }
-
-
-    }
-  }
-
-  var trial_iti_procedure = {
-    timeline: [{
-        type: 'jspsych-audio-keyboard-response-TAP',
-        stimulus: jsPsych.timelineVariable('stimulus'),
-        choices: 't',
-        prompt: "<p> + </p>",
-        response_ends_trial: false,
-        trial_ends_after_audio: true
-      },
-      { // intertrial intv
-        type: 'html-keyboard-response-ITI',
-        stimulus: '+',
-        trial_duration: jsPsych.timelineVariable('iti'),
-        choices: jsPsych.NO_KEYS
-      },
-
-    ],
-
-    timeline_variables: timeline_pt1,
-    randomize_order: false,
-  }
-
+  // INSTRUCTIONS ---------------------------------------
   var helloo = {
     type: 'html-button-response',
     stimulus: '<pstyle="font-size:20px;">WELCOME</p><br>' +
       '<p>In this experiment, you will be asked to tap your finger on the keyboard, ' +
-      'first without any sound, then alongside with the sounds you will listen to over headphones.</p>' +
-      '<p>Click continue when you are ready. </p>',
+      'first without any sound, then alongside with the sounds you will listen to over your headphones.</p>',
+    choices: ['Continue'],
+  };
+  var instrucPages = {
+    type: 'instructions', // modified >> pauses wobaudio, noisaudio...
+    pages: [
+      '<p>Now, please turn down your volume and then click the button below.<br></p>' +
+      '<button onclick="playVol(volaudio)"> play sound </button>' +
+      '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
+      '<p style="color:#FF0000";>Please keep in mind that you should not change the volume throughout the experiment !</p>' +
+      '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
+      '<p>Once it is set, click &#39next&#39.<br><br></p>', // SOUND LEVEL ADJUST
+
+      '<p>In the following section, you will tap on the T key alongside with the sounds you will hear over your headphones.<br></p>' +
+      '<p>On each trial, you will hear a sequence of five sounds. Your task is to start tapping along with the sounds, and ' +
+      'then keep going at the same rate once the sounds stop. You should keep tapping as evenly as possible until the ' +
+      'screen changes color.</p>', // instruction1
+
+      '<p>Here is a graphical representation of the task.<br></p>' +
+
+      '<div style="text-align:center">' +
+      '<img src="OscFlex_example_smol.jpg">' +
+      '</div>' +
+
+      '<p>Remember, you should start tapping your finger as soon as you can and tap along with the sounds.</p>' +
+      '<p>Keep tapping after the sounds stop, until the screen changes color.</p>' + // instruction  picture
+      '<p>Click &#39next&#39 to proceed to the practice section.</p>',
+
+    ],
+    show_clickable_nav: true
+  };
+  var thxbye = {
+    type: 'html-button-response',
+    stimulus: '<p style="font-size:30px;">Thank you!</p>' +
+      '<p>You have completed the experiment.</p>' +
+      '<p>Click &#39continue&#39 to close the experiment and proceed to Prolific.</p>',
     choices: ['Continue']
   };
 
-  // SMT trials 30 taps ---------------------------------------
+  // SMT & re-SMT (30 taps) ---------------------------------------
   var tapSMTinstruc = {
     type: 'html-button-response',
     stimulus: '<pstyle="font-size:20px;">TAPPING</p><br>' +
       '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
 
-      '<div style="display:table-cell; vertical-align:middle; text-align:center">'+
-      '<img src="key_t.png">'+
-      '</div>'+
+      '<div style="display:table-cell; vertical-align:middle; text-align:center">' +
+      '<img src="key_t.png">' +
+      '</div>' +
 
       '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
       '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
@@ -195,47 +167,146 @@ function playVol(audio) {
     randomize_order: false,
   }
 
-  // INSTRUCTIONS ---------------------------------------
-  var instrucPages = {
-    type: 'instructions', // modified >> pauses wobaudio, noisaudio...
-    pages: [
-      '<p>Now, please turn down your volume and then click the button below.<br></p>' +
-      '<button onclick="playVol(volaudio)"> play sound </button>' +
-      '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
-      '<p style="color:#FF0000";>Please keep in mind that you should not change the volume throughout the experiment !</p>' +
-      '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
-      '<p>Once it is set, click &#39next&#39.<br><br></p>', // SOUND LEVEL ADJUST
+  // PRACTICE ---------------------------------------
+  var feedback_text = [];
+  var practice_procedure = {
+    timeline: [{
+        type: 'jspsych-audio-keyboard-response-TAP',
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: [40],
+        prompt: "<p> + </p>",
+        response_ends_trial: false,
+        trial_ends_after_audio: true,
+        on_finish: function(data) {
+          var curr_stim_ioi = parseInt(data.stimulus.substr(12, 3));
+          if (data.tap_times === undefined || data.tap_times.length == 0) {
+            // array empty or does not exist
+            // alert('no taps!');
+            feedback_text.push('No taps detected!<br><br>');
+            nogoodgottago++;
+          } else { // if there are taps,
+            if (data.tap_times.length < 9) { // check how many
+              feedback_text.push('Not enough number of taps detected!<br>Please start tapping as soon as you hear the sound and keep going until the screen changes color.<br><br>');
+            };
+            var tap_ioi = calc_ioi_med(data.tap_times); // calculate their ioi
 
-      '<p>In the following section, you will tap on the T key alongside with the sounds you will hear over your headphones.<br></p>' +
-      '<p>On each trial, you will hear a sequence of five sounds.Your task is to start tapping along with the sounds, and ' +
-      'then keep going at the same rate once the sounds stop. You should keep tapping as evenly as possible until the ' +
-      'screen changes color.</p>', // instruction1
+            if (tap_ioi > curr_stim_ioi * 1.2) {
+              feedback_text.push('Too slow!<br><br>');
+            }
+            else if (tap_ioi < curr_stim_ioi * 0.8) {
+              feedback_text.push('Too fast!<br><br>');
+            }
+            else {
+              feedback_text.push('Good!<br><br>');
+            }
+          } // if else calculations
+        } //on_finish: function
+      },
 
-      '<p>Here is a graphical representation of the task.<br></p>' +
+      { // intertrial intv
+        type: 'html-keyboard-response-ITI',
+        stimulus: '+',
+        trial_duration: 600,
+        choices: jsPsych.NO_KEYS
+      },
 
-      '<div style="text-align:center">'+
-      '<img src="OscFlex_example_smol.jpg">'+
-      '</div>'+
-
-      '<p>Remember, you should start tapping your finger as soon as you can and tap along with the sounds.</p>' +
-      '<p>Keep tapping after the sounds stop, until the screen changes color.</p>'+ // instruction  picture
-      '<p><br>If you understood the task, <strong style="color: red;">click &#39next&#39 to start the experiment.</strong><br></p>',
-
+      { // intertrial intv
+        type: 'html-button-response',
+        on_start: function(trial) {
+          trial.stimulus = feedback_text;
+          feedback_text = [];
+        },
+        stimulus: '+',
+        choices: ['OK']
+      }
     ],
-    show_clickable_nav: true
+
+    timeline_variables: curr_prac,
+    randomize_order: false,
+    on_finish: function () {
+      if (nogoodgottago > 2) {
+        alert('Faulty participation detected. Expertiment will now terminate.')
+      }
+    }
+  } // practice_procedure end
+
+  // TRIALS ---------------------------------------
+  var trialstart = {
+    type: 'html-button-response',
+    stimulus: '<p style="font-size:30px;">EXPERIMENT</p>' +
+      '<p>You have completed the practice section.</p>' +
+      '<p>In the following section, the pacing will be automated, and no feedback will be given. </p>'+
+      '<p>Therefore, it is important that you keep concentrated to the task until the break, and then until the end.</p>'+
+      '<p>Please click the button below to proceed to the experimental section</p>',
+    choices: ['Start the experiment']
   };
 
 
+  var trial_iti_part1 = {
+    timeline: [{
+        type: 'jspsych-audio-keyboard-response-TAP',
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: [40],
+        prompt: "<p> + </p>",
+        response_ends_trial: false,
+        trial_ends_after_audio: true
+      },
+      { // intertrial intv
+        type: 'html-keyboard-response-ITI',
+        stimulus: '+',
+        trial_duration: jsPsych.timelineVariable('iti'),
+        choices: jsPsych.NO_KEYS
+      },
 
-// PROCEDURE ========================================================
-  timeVar.push(helloo)
-  // timeVar.push(SMT_procedure)
-  timeVar.push(instrucPages)
-  timeVar.push(practice_procedure)
+    ],
+
+    timeline_variables: timeline_pt1,
+    randomize_order: false,
+  }
+  var break_trial = {
+    type: 'html-button-response',
+    stimulus: '<p style="font-size:30px;">Break!</p>' +
+      '<p><br>Click &#39continue&#39 to proceed.</p>',
+    choices: ['Continue']
+  };
+  var trial_iti_part2 = {
+    timeline: [{
+        type: 'jspsych-audio-keyboard-response-TAP',
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: [40],
+        prompt: "<p> + </p>",
+        response_ends_trial: false,
+        trial_ends_after_audio: true
+      },
+      { // intertrial intv
+        type: 'html-keyboard-response-ITI',
+        stimulus: '+',
+        trial_duration: jsPsych.timelineVariable('iti'),
+        choices: jsPsych.NO_KEYS
+      },
+
+    ],
+
+    timeline_variables: timeline_pt2,
+    randomize_order: false,
+  }
 
 
+  // PROCEDURE ========================================================
+  timeVar.push(helloo);
+  // timeVar.push(SMT_procedure);
+  // timeVar.push(instrucPages);
+
+  timeVar.push(practice_procedure);
+  timeVar.push(trialstart);
+  timeVar.push(trial_iti_part1);
+  timeVar.push(break_trial);
+  timeVar.push(trial_iti_part2);
+  timeVar.push(SMT_repeat);
+  timeVar.push(thxbye);
 
 
+  // EXPERIMENT INIT ========================================================
   jsPsych.init({
     timeline: timeVar, //use timeVar as timeline
     use_webaudio: false,
