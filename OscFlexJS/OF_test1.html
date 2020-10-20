@@ -10,6 +10,7 @@
   <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-responseSSS.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response-TAP.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response-ITI.js"></script>
   <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
   </link>
@@ -18,9 +19,6 @@
 <body></body>
 <script>
   // JATOS STUFF HERE ========================================================
-
-
-
 
 
   // FUNCTIONS ========================================================
@@ -60,7 +58,7 @@
     type: 'html-button-response',
     stimulus: '<pstyle="font-size:20px;">WELCOME</p><br>' +
       '<p>In this experiment, you will be asked to tap your finger on the keyboard, ' +
-      'first without any sound, then alongside with the sounds you will listen to over your headphones.</p>',
+      'either without any sound, or alongside with the sounds you will listen to over your headphones.</p>',
     choices: ['Continue'],
   };
   var instrucPages = {
@@ -69,11 +67,10 @@
       '<p>Now, please turn down your volume and then click the button below.<br></p>' +
       '<button onclick="playVol(volaudio)"> play sound </button>' +
       '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
-      '<p style="color:#FF0000";>Please keep in mind that you should not change the volume throughout the experiment !</p>' +
       '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
       '<p>Once it is set, click &#39next&#39.<br><br></p>', // SOUND LEVEL ADJUST
 
-      '<p>In the following section, you will tap on the T key alongside with the sounds you will hear over your headphones.<br></p>' +
+      '<p>In the following sections, you will tap on the arrow keys alongside with the sounds you will hear over your headphones.<br></p>' +
       '<p>On each trial, you will hear a sequence of five sounds. Your task is to start tapping along with the sounds, and ' +
       'then keep going at the same rate once the sounds stop. You should keep tapping as evenly as possible until the ' +
       'screen changes color.</p>', // instruction1
@@ -95,18 +92,19 @@
     type: 'html-button-response',
     stimulus: '<p style="font-size:30px;">Thank you!</p>' +
       '<p>You have completed the experiment.</p>' +
-      '<p>Click &#39continue&#39 to close the experiment and proceed to Prolific.</p>',
-    choices: ['Continue']
+      '<p>Click &#39close&#39 to close the experiment and proceed to Prolific.</p>',
+    choices: ['Close']
   };
 
   // SMT & re-SMT (30 taps) ---------------------------------------
   var tapSMTinstruc = {
     type: 'html-button-response',
     stimulus: '<pstyle="font-size:20px;">TAPPING</p><br>' +
-      '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
+      '<p>Your first task is to tap on the keyboard by pressing keys on a regular beat. </p>' +
+      '<p>You can use either one of the left or right arrow keys. </p>' +
 
       '<div style="display:table-cell; vertical-align:middle; text-align:center">' +
-      '<img src="key_t.png">' +
+      '<img src="key_tap.png">' +
       '</div>' +
 
       '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
@@ -117,8 +115,8 @@
   var tapSMTcomfy = {
     type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
     stimulus: 'silence.wav',
-    choices: 't',
-    prompt: "<p>Please tap on the T key regularly, at a rate that is the most COMFORTABLE for you to maintain.</p>",
+    choices: [37,39],
+    prompt: "<p>Please tap on the arrow key regularly, at a rate that is the most COMFORTABLE for you to maintain.</p>",
     response_ends_trial: true,
     //trial_duration: 10000,
     post_trial_gap: 500,
@@ -126,8 +124,8 @@
   var tapSMTfast = {
     type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
     stimulus: 'silence.wav',
-    choices: 't',
-    prompt: "<p>Please tap on the T key regularly, at the FASTEST rate that is comfortable for you to maintain.</p>",
+    choices: [37,39],
+    prompt: "<p>Please tap on the arrow key regularly, at the FASTEST rate that is comfortable for you to maintain.</p>",
     response_ends_trial: true,
     //trial_duration: 10000,
     post_trial_gap: 500,
@@ -135,8 +133,8 @@
   var tapSMTslow = {
     type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
     stimulus: 'silence.wav',
-    choices: 't',
-    prompt: "<p>Please tap on the T key regularly, at the SLOWEST rate that is comfortable for you to maintain.</p>",
+    choices: [37,39],
+    prompt: "<p>Please tap on the arrow key regularly, at the SLOWEST rate that is comfortable for you to maintain.</p>",
     response_ends_trial: true,
     //trial_duration: 10000,
     post_trial_gap: 500,
@@ -173,7 +171,7 @@
     timeline: [{
         type: 'jspsych-audio-keyboard-response-TAP',
         stimulus: jsPsych.timelineVariable('stimulus'),
-        choices: [40],
+        choices: [37,39],
         prompt: "<p> + </p>",
         response_ends_trial: false,
         trial_ends_after_audio: true,
@@ -237,8 +235,8 @@
       '<p>You have completed the practice section.</p>' +
       '<p>In the following section, the pacing will be automated, and no feedback will be given. </p>'+
       '<p>Therefore, it is important that you keep concentrated to the task until the break, and then until the end.</p>'+
-      '<p>Please click the button below to proceed to the experimental section</p>',
-    choices: ['Start the experiment']
+      '<p>Please click the button below to proceed to the experiment section</p>',
+    choices: ['Start the experiment section']
   };
 
 
@@ -246,7 +244,7 @@
     timeline: [{
         type: 'jspsych-audio-keyboard-response-TAP',
         stimulus: jsPsych.timelineVariable('stimulus'),
-        choices: [40],
+        choices: [37,39],
         prompt: "<p> + </p>",
         response_ends_trial: false,
         trial_ends_after_audio: true
@@ -273,7 +271,7 @@
     timeline: [{
         type: 'jspsych-audio-keyboard-response-TAP',
         stimulus: jsPsych.timelineVariable('stimulus'),
-        choices: [40],
+        choices:[37,39],
         prompt: "<p> + </p>",
         response_ends_trial: false,
         trial_ends_after_audio: true
@@ -291,11 +289,10 @@
     randomize_order: false,
   }
 
-
   // PROCEDURE ========================================================
   timeVar.push(helloo);
-  // timeVar.push(SMT_procedure);
-  // timeVar.push(instrucPages);
+  timeVar.push(SMT_procedure);
+  timeVar.push(instrucPages);
 
   timeVar.push(practice_procedure);
   timeVar.push(trialstart);
@@ -305,19 +302,19 @@
   timeVar.push(SMT_repeat);
   timeVar.push(thxbye);
 
-
   // EXPERIMENT INIT ========================================================
   jsPsych.init({
     timeline: timeVar, //use timeVar as timeline
     use_webaudio: false,
     preload_audio: audio_files,
     on_close: function() {
-      //jsPsych.data.displayData();
-      // jsPsych.data.get().localSave('csv','OFJS_test_closed.csv');
+      var particip_number = 666; // <<<<<<<<<<<< change dis later to jatos stuff
+      var filename_base = 'OFJS_test_participant_';
+      filename = filename_base.concat(particip_number.toString(), '.csv')
+      jsPsych.data.get().localSave('csv',filename);
     },
     on_finish: function() {
-      //jsPsych.data.displayData();
-      jsPsych.data.get().localSave('csv', 'OFJS_test.csv');
+      // jsPsych.data.get().localSave('csv', 'OFJS_test.csv');
     },
   });
 </script>
