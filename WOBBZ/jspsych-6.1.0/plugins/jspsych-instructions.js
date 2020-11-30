@@ -141,7 +141,8 @@ jsPsych.plugins.instructions = (function() {
     function next() {
 
 volaudio.pause();
-
+noisaudio.pause();
+wobaudio.pause();
 
       add_current_page_to_view_history()
 
@@ -159,6 +160,8 @@ volaudio.pause();
     function back() {
 
 volaudio.pause();
+noisaudio.pause();
+wobaudio.pause();
 
 
       add_current_page_to_view_history()

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="jspsych-6.1.0/jspsych.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-button-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response-TAP.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+</head>
+
+<body></body>
+<script>
+
+
+var audio_files = [
+    "VorbergShul_35_35.wav",
+];
+
+  var timeVar = [];
+
+
+var headphonequery = {
+  type: 'survey-text',
+  questions: [
+    {prompt: "What is the brand and model of the headphones you are using for this experiment?", name: 'HeadphoneINFO'},
+  ],
+};
+
+
+
+  var sectDone = {
+    type: 'html-button-response',
+    stimulus: '<p>Click continue to exit and save the csv file. </p>',
+    choices: ['Continue']
+  };
+
+  var tapSMTinstruc = {
+    type: 'html-button-response',
+    stimulus: '<pstyle="font-size:20px;">35 sync + 35 continuation taps</p><br>' +
+      '<p>You will tap by pressing T key immediately after clicking continue.</p>'+
+      '<p>Click continue when you are ready. </p>',
+    choices: ['Continue']
+  };
+  var tapSMTcomfy = {
+    type: 'jspsych-audio-keyboard-response-TAP', // plugin has been modified to record multiple keypresses
+    stimulus: 'VorbergShul_35_35.wav',
+    choices: 't',
+    prompt: "<p>Please tap on the T key</p>",
+    trial_ends_after_audio: true,
+    response_ends_trial: false,
+    //trial_duration: 10000,
+    post_trial_gap: 500,
+  };
+
+  var SMT_stop = {
+    type: 'html-button-response',
+    stimulus: '<p>You can stop tapping.</p>',
+    choices: ['Continue']
+  }
+  var SMT_procedure = {
+    timeline: [tapSMTinstruc, tapSMTcomfy, SMT_stop],
+    repetitions: 3,
+    randomize_order: false,
+  }
+
+// timeVar.push(SMT_procedure);
+timeVar.push(headphonequery);
+timeVar.push(sectDone);
+
+
+
+  // initiate experiment
+  jsPsych.init({
+    /*timeline: [pre_audio, trial_1, trial_2],*/
+    timeline: timeVar, //use timeVar as timeline
+    show_progress_bar: true,
+    use_webaudio: false,
+    preload_audio: audio_files,
+    on_close: function() {
+      //jsPsych.data.displayData();
+      jsPsych.data.get().localSave('csv','taps4modeling_X_closed.csv');
+    },
+    on_finish: function() {
+      //jsPsych.data.displayData();
+      jsPsych.data.get().localSave('csv', 'taps4modeling_X.csv');
+    },
+
+    default_iti: 600
+  });
+</script>
+
+</html>

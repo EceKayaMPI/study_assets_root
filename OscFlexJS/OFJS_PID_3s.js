@@ -1,18 +1,15 @@
 var info_OFJS_PID = [
 	{
 		"participant_order":1,
-		"pracvars":[
+		"prac_IOI":[
 			{
 				stimulus:'of_stims/OF_300ms.wav',
-				feedback:'hi'
 			},
 			{
 				stimulus:'of_stims/OF_500ms.wav',
-				feedback:'hi'
 			},
 			{
 				stimulus:'of_stims/OF_800ms.wav',
-				feedback:'hi'
 			}
 		],
 		"timevars_part1":[
