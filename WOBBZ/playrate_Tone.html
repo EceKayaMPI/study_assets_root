@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="jspsych-6.1.0/jspsych.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-WOB-slider-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-PLAY-slider-response.js"></script>
+      <script src="jspsych-6.1.0/plugins/jspsych-audio-slider-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-audio-slider-speed-response.js"></script>
+  <script src="ToneY.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body></body>
+<script>
+
+var audio_files = [
+		"beat1.mp3",
+];
+var thxbye = {
+      type: 'html-button-response',
+      stimulus: '<p hi </p>',
+      choices: ['Continue']
+    }
+
+    var testaudiotrl = {
+      type: 'audio-slider-response', // plugin has been modified to record multiple keypresses
+      stimulus: 'beat1.mp3',
+      prompt: "<p>Pl.</p>",
+      response_ends_trial: true,
+      //trial_duration: 10000,
+      post_trial_gap: 500,
+    }
+
+
+var playslider = {
+    type: 'audio-slider-speed-response',
+    stimulus: 'beat1.mp3',
+    min: 1,
+    max: 2,
+    step: 0.1,
+    start: 2,
+    labels: ['slow', 'fast'],
+    prompt: '<p>Pleadsfghjhkg.</p>',
+    slider_width: 300,
+    require_movement: true,
+};
+
+// initiate experiment
+      jsPsych.init({
+        /*timeline: [pre_audio, trial_1, trial_2],*/
+        timeline: [thxbye, playslider],  //use timeVar as timeline
+        use_webaudio: false,
+        on_close: function() {
+          //jsPsych.data.displayData();
+          // jsPsych.data.get().localSave('csv','AM2_subid_X_closed.csv');
+        },
+        on_finish: function() {
+          //jsPsych.data.displayData();
+          // jsPsych.data.get().localSave('csv','AM2_subid_X.csv');
+        },
+
+        default_iti: 300
+      });
+
+
+
+
+</script>
+
+</html>

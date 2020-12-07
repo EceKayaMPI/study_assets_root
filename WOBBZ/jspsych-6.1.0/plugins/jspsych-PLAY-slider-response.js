@@ -127,17 +127,24 @@ jsPsych.plugins['PLAY-slider-response'] = (function() {
     // noiseFilter.start();
     // noise.start();
 
-    var semitones = 5;
-    var source = new Tone.Player({
-      url: "https://tonejs.github.io/audio/loop/FWDL.mp3",
-      loop: true,
-      loopStart: 0,
-      loopEnd: 1,
-    });
-    var shift = new Tone.PitchShift(semitones);
-    source.connect(shift);
-    shift.toMaster();
+    // var semitones = 13;
+    // const source = new Tone.Player({
+    //   url: "https://tonejs.github.io/audio/loop/FWDL.mp3",
+    //   loop: true,
+    //   loopStart: 0,
+    //   loopEnd: 1,
+    // });
+    // const shift = new Tone.PitchShift(semitones);
+    // source.connect(shift);
+    // shift.toMaster();
 
+
+
+    var player = new Audio();
+    player.src = "https://tonejs.github.io/audio/loop/FWDL.mp3";
+    player.loop = true;
+    player.playbackRate = 2;
+    player.play();
 
 
     // response ------------------------------------------------------------
@@ -162,7 +169,7 @@ jsPsych.plugins['PLAY-slider-response'] = (function() {
       response.rt = rt;
       response.response = display_element.querySelector('#jspsych-audio-slider-response-response').value;
 
-      source.stop();
+      player.pause();
 
       if (trial.response_ends_trial) {
         end_trial();
@@ -172,13 +179,20 @@ jsPsych.plugins['PLAY-slider-response'] = (function() {
     });
 
     // slider CHANGE ------------------------------------------
-    display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('change', function() {
+    // display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('mousemove', function() {
+    //   player.playbackRate.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+    //   console.log(player.playbackRate.value);
+    // });
+
+
+    display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('mousemove', function() {
       //	noise.volume.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
-      source.start();
-      shift = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+      player.playbackRate = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+      console.log(player.playbackRate);
     });
 
-    console.log(semitones)
+
+
 
 
 
