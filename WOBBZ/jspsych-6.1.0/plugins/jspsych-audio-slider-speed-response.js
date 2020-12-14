@@ -93,8 +93,12 @@ jsPsych.plugins['audio-slider-speed-response'] = (function() {
       source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
       source.connect(context.destination);
     } else {
-      const audiocon = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
-			var audio = audiocon;
+			var bufbuf = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
+			var tonebuf = new Tone.BufferSource(bufbuf);
+			var audio = new Tone.Player(tonebuf).toMaster();
+
+			audio.autostart = true;
+			audio.setLoopPoints(0.2, 0.3);
 			audio.loop = true;
     }
 
@@ -185,7 +189,7 @@ jsPsych.plugins['audio-slider-speed-response'] = (function() {
         source.stop();
         source.onended = function() { }
       } else {
-        audio.pause();
+        // audio.pause();
         audio.removeEventListener('ended', end_trial);
       }
 
@@ -208,7 +212,7 @@ jsPsych.plugins['audio-slider-speed-response'] = (function() {
       startTime = context.currentTime;
       source.start(startTime);
     } else {
-      audio.play();
+      audio.start();
     }
 
     // end trial if trial_duration is set
