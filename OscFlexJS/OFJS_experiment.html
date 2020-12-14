@@ -337,22 +337,28 @@
         timeline: timeVar, //use timeVar as timeline
         use_webaudio: false,
         preload_audio: audio_files,
-        on_close: function() {
+        on_close: function(event) {
+
           var filename_base = 'OFJS_test_participant_';
           filename = filename_base.concat(pt_index.toString(), '_closed.csv');
-          // jsPsych.data.get().localSave('csv', filename);
           var resultCSV = jsPsych.data.get().csv();
-          var closed_data = jatos.uploadResultFile(resultCSV, filename);
+          jatos.uploadResultFile(resultCSV, filename);
+
+          event.preventDefault();
+          event.returnValue = '';
         },
 
         on_finish: function() {
-          // var interaction_data = jsPsych.data.getInteractionData();
-          // jatos.uploadResultFile(interaction_data, 'interac.csv');
-          //
-          // var resultCSV = jsPsych.data.get().csv();
-          // var full_data = jatos.uploadResultFile(resultCSV, 'data.csv');
+          var filename_base = 'OFJS_test_participant_';
 
-          // jsPsych.data.get().localSave('csv', 'OFJS_test.csv');
+          var resultCSV = jsPsych.data.get().csv();
+          filename = filename_base.concat(pt_index.toString(), '_fin.csv');
+          jatos.uploadResultFile(resultCSV, filename);
+
+          var interaction_data = jsPsych.data.getInteractionData();
+          interacfilename = filename_base.concat(pt_index.toString(), '_interaction.csv');
+          jatos.uploadResultFile(interaction_data, interacfilename);
+
         },
       });
 
