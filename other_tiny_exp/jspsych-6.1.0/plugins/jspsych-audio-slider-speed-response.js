@@ -93,13 +93,17 @@ jsPsych.plugins['audio-slider-speed-response'] = (function() {
       source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
       source.connect(context.destination);
     } else {
-			var bufbuf = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
-			var tonebuf = new Tone.BufferSource(bufbuf);
-			var audio = new Tone.Player(tonebuf).toMaster();
-
-			audio.autostart = true;
-			audio.setLoopPoints(0.2, 0.3);
+			var audio = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
+			audio.currentTime = 0;
 			audio.loop = true;
+
+			// var bufbuf = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
+			// var tonebuf = new Tone.BufferSource(bufbuf);
+			// var audio = new Tone.Player(tonebuf).toMaster();
+			//
+			// audio.autostart = true;
+			// audio.setLoopPoints(0.2, 0.3);
+			// audio.loop = true;
     }
 
     // set up end event if trial needs it
@@ -173,9 +177,9 @@ jsPsych.plugins['audio-slider-speed-response'] = (function() {
 
 		// slider CHANGE
 		display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('mousemove', function() {
-      //	noise.volume.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
       audio.playbackRate = display_element.querySelector('#jspsych-audio-slider-response-response').value;
-      console.log(audio.playbackRate);
+			// source.playbackRate.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+			console.log(audio.playbackRate);
     });
 
 
@@ -189,7 +193,7 @@ jsPsych.plugins['audio-slider-speed-response'] = (function() {
         source.stop();
         source.onended = function() { }
       } else {
-        // audio.pause();
+        audio.pause();
         audio.removeEventListener('ended', end_trial);
       }
 
@@ -212,7 +216,7 @@ jsPsych.plugins['audio-slider-speed-response'] = (function() {
       startTime = context.currentTime;
       source.start(startTime);
     } else {
-      audio.start();
+      audio.play();
     }
 
     // end trial if trial_duration is set

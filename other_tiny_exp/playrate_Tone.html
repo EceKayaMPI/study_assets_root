@@ -122,12 +122,12 @@ timeVar.push(playslider);
         preload_audio: audio_files,
         use_webaudio: false,
         on_close: function() {
-          var resultCSV = jsPsych.data.get().csv();
-          var full_data = jatos.uploadResultFile(resultCSV, 'partdata.csv');
+          //jsPsych.data.displayData();
+          // jsPsych.data.get().localSave('csv','AM2_subid_X_closed.csv');
         },
         on_finish: function() {
-          var resultCSV = jsPsych.data.get().csv();
-          var full_data = jatos.uploadResultFile(resultCSV, 'data.csv');
+          //jsPsych.data.displayData();
+          // jsPsych.data.get().localSave('csv','AM2_subid_X.csv');
         },
 
         default_iti: 300
