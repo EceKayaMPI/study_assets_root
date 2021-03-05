@@ -203,8 +203,8 @@ function playVol(audio) {
         timeline: audio_stims_1,
         choices: ['w', 'n'],
         prompt: '<p style="font-size:60px;">+</p>',
-        response_ends_trial: false,
-        trial_duration: 2050, //to wait even if resp is made!
+        response_ends_trial: true,
+        // trial_duration: 2050, //to wait even if resp is made!
       };
 
       var test_trials_2 = {
@@ -304,6 +304,7 @@ function playVol(audio) {
       // EXPERIMENT INIT =======================================================
       jsPsych.init({
         timeline: timeVar,
+        default_iti: 550,
         on_close: function() {
           var resultCSV = jsPsych.data.get().csv();
           var closed_data = jatos.uploadResultFile(resultCSV, 'data_closed.csv');

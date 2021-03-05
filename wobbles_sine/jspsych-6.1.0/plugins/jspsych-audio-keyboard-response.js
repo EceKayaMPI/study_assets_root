@@ -66,10 +66,15 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
       var source = context.createBufferSource();
       source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
       source.connect(context.destination);
-      console.log(source);
+      var sound_dur = source.buffer.duration;
     } else {
       var audio = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
       audio.currentTime = 0;
+    }
+
+    if (trial.trial_duration == null) {
+        trial.trial_duration = sound_dur;
+        // console.log(trial.trial_duration);
     }
 
     // set up end event if trial needs it
@@ -137,17 +142,28 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
       if (response.key == null) {
         response = info;
       }
+
 // wait for response AND trial duration to end trial
       if (trial.response_ends_trial) {
+        // console.log(trial.trial_duration);
+
         if(response.rt > trial.trial_duration){
+        // console.log(trial.trial_duration - response.rt);
+
         end_trial();
-        } else {
+      } else { // keypress before audio end
+
+          console.log(Math.round((trial.trial_duration - response.rt)*1000));
+
           jsPsych.pluginAPI.setTimeout(function(){
             end_trial();
-          }, Math.round(trial.trial_duration - response.rt) );
+          }, (Math.round((trial.trial_duration - response.rt)*1000)) + 50);
+
         }
       }
     };
+
+// trial start -------------------------------------------
 
     // start audio
     if(context !== null){
