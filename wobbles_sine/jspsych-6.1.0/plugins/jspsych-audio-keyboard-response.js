@@ -145,15 +145,11 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
 
 // wait for response AND trial duration to end trial
       if (trial.response_ends_trial) {
-        // console.log(trial.trial_duration);
 
         if(response.rt > trial.trial_duration){
-        // console.log(trial.trial_duration - response.rt);
-
         end_trial();
-      } else { // keypress before audio end
 
-          console.log(Math.round((trial.trial_duration - response.rt)*1000));
+      } else { // keypress before audio end
 
           jsPsych.pluginAPI.setTimeout(function(){
             end_trial();

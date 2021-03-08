@@ -1,0 +1,100 @@
+
+<html>
+<head>
+  <script src='jatos.js'></script>
+  <script src='jspsych-6.1.0/jspsych.js'></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+
+  </head>
+  <body></body>
+  <script>
+
+
+  /* Start the experiment */
+  jatos.onLoad(function() {
+
+  function init_experiment() {
+
+  var timeline = [];
+
+  /* Information sheet */
+  var informationSheet = {
+    type: 'html-button-response',
+    stimulus: '<embed src="info_sheet.pdf" type="application/pdf" width="100%" height="600px" />'+
+    '<p>Welcome.<p>'+
+    '<p>Please read the information sheet above carefully, then press "Continue" to advance to the next page.</p><p>You are free to download this information sheet as a PDF if your browser supports it, or you may contact us via Prolific to request a copy.</p>',
+    choices: ['Continue'],
+    margin_vertical: '20px',
+  }
+  timeline.push(informationSheet);
+
+  /* Data protection */
+  var dataProtection = {
+    type: 'html-button-response',
+    stimulus: '<embed src="data_protection.pdf" type="application/pdf" width="100%" height="600px" />'+
+    '<p>Please read the data protection sheet above carefully, then press "Continue" to advance to the next page.</p><p>You are free to download this information sheet as a PDF if your browser supports it, or you may contact us via Prolific to request a copy.</p>',
+    choices: ['Continue'],
+    margin_vertical: '20px'
+  }
+  timeline.push(dataProtection);
+
+  /* Informed consent */
+  var consentForm = {
+    type: 'html-button-response',
+    stimulus: '<embed src="consent_form.pdf" type="application/pdf" width="100%" height="600px" />'+
+    '<p>By pressing "Continue", you confirm that you give informed consent to participate in this study. You may withdraw your consent at any time without any negative consequences by closing this browser window. If you do not wish to participate in this study, please press "Abort".</p><p> You are free to download this consent form as a PDF if your browser supports it, or you may contact us via Prolific to request a copy.</p>',
+    choices: ['Continue', 'Abort'],
+    margin_vertical: '20px',
+    on_finish: function(data) {
+      if (data.button_pressed == 1) {
+        jatos.abortStudy();
+        }
+    },
+  }
+  timeline.push(consentForm);
+
+
+    jsPsych.init({
+      timeline: timeline,
+      on_finish: function(){
+        var out = jsPsych.data.get().json();
+        var prolid = jatos.urlQueryParameters.prolific_id;
+        jatos.submitResultData(out)
+        jatos.submitResultData(prolid)
+        .then(jatos.startNextComponent);
+      }
+    })
+
+  } // init_experiment func
+
+  var prolific_id = jatos.urlQueryParameters.prolific_id
+  if (prolific_id) {
+
+    // IF existing ID
+    if (jatos.batchSession.find('/' + prolific_id)) {
+      init_experiment();
+
+      // IF new ID
+    } else {
+
+      // count existing participants
+      var batchSession = jatos.batchSession.getAll();
+      var pt_index = Object.keys(batchSession).length;
+
+      // add new ID to session data
+      var promise = jatos.batchSession.add('/' + prolific_id, pt_index);
+      // if added, start experiment
+      promise.done(() => {
+        init_experiment();
+      });
+    }
+  } else {
+    alert('No prolific ID found! please contact us!')
+    jatos.abortStudy();
+  }
+
+});
+  </script>
+  </html>

@@ -55,32 +55,32 @@ function playVol(audio) {
 
       var timeVar = [];
 
-      // var id_check = {
-      //   type: 'html-button-response',
-      //   choices: ['Continue', 'Abort'],
-      //   stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click &#39abort&#39 and contact us in Prolific.</p>',
-      //   on_finish: function(data) {
-      //     if (data.button_pressed == 1) {
-      //       jatos.abortStudy();
-      //       }
-      //     },
-      //   }
-      //   timeVar.push(id_check)
-      //   timeVar.push({
-      //       type: 'fullscreen',
-      //       fullscreen_mode: true
-      //     });
-      //
-      //     ///&#39
-      //
-      //
-      //     var headphonequery = {
-      //       type: 'survey-text',
-      //       questions: [
-      //         {prompt: "What is the brand and model of the headphones you are using for this experiment?", name: 'HeadphoneINFO'},
-      //       ],
-      //     };
-      //     timeVar.push(headphonequery)
+      var id_check = {
+        type: 'html-button-response',
+        choices: ['Continue', 'Abort'],
+        stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click &#39abort&#39 and contact us in Prolific.</p>',
+        on_finish: function(data) {
+          if (data.button_pressed == 1) {
+            jatos.abortStudy();
+            }
+          },
+        }
+        timeVar.push(id_check)
+        timeVar.push({
+            type: 'fullscreen',
+            fullscreen_mode: true
+          });
+
+          ///&#39
+
+
+          var headphonequery = {
+            type: 'survey-text',
+            questions: [
+              {prompt: "What is the brand and model of the headphones you are using for this experiment?", name: 'HeadphoneINFO'},
+            ],
+          };
+          timeVar.push(headphonequery)
 
       // general instructions etc -------------------------------- << pages
       var welcomePage = {
@@ -90,7 +90,7 @@ function playVol(audio) {
           '<p>First, you will be asked to tap on the keyboard witout listening to any sound. This will be repeated later as well.</p>' +
           '<p>Then, you will be instructed about another procedure where you will hear sounds and press keys accordingly.</p>' +
           '<p>Finally, you will be asked to adjust some properties of the incoming sounds by moving a slider.</p>' +
-          '<p>The whole session is expected to take approximately 60 minutes. A break option will be given halfway through the experiment.<br><br><br></p>',
+          '<p>The whole session is expected to take approximately 60 minutes. A break option will be given two times through the experiment.<br><br><br></p>',
         choices: ['Continue']
       }
 
@@ -284,19 +284,19 @@ function playVol(audio) {
       // PROCEDURE =============================================================
 
       timeVar.push(welcomePage);
-      // timeVar.push(SMT_procedure);
-      // timeVar.push(sectDone);
-      // timeVar.push(instrucPages);
+      timeVar.push(SMT_procedure);
+      timeVar.push(sectDone);
+      timeVar.push(instrucPages);
       timeVar.push(test_trials_1);
       timeVar.push(break_trial);
       timeVar.push(test_trials_2);
-      timeVar.push(sectDone);
-      timeVar.push(test_trials_1);
       timeVar.push(break_trial);
+      timeVar.push(test_trials_3);
+      timeVar.push(sectDone);
       timeVar.push(sliderInstruc);
       timeVar.push(sliderTrials);
-      timeVar.push(SMT_repeat);
       timeVar.push(sectDone);
+      timeVar.push(SMT_repeat);
       timeVar.push(thxbye);
 
       // console.log(timeVar);
@@ -317,7 +317,7 @@ function playVol(audio) {
 
             jatos.endStudyAjax().then(() => {
             // Change this URL to the one you see in Prolific
-            // window.location.href = 'https://app.prolific.co/submissions/complete?cc=7A0BF2E1'
+            window.location.href = 'https://app.prolific.co/submissions/complete?cc=7A0BF2E1'
             });
         },
       })

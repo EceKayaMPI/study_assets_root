@@ -22,6 +22,9 @@
     console.log(paramsfalan)
 
         jatos.onLoad(function() {
+
+            var prolific_id = jatos.urlQueryParameters.prolific_id;
+
             //$("#text").html(jatos.componentJsonInput.text);
             $("#text").html(jatos.batchJsonInput)
 
@@ -34,6 +37,7 @@
         });
 
         $('#cancelButton').click(function() {
+            var closed_data = jatos.submitResultData(prolific_id);
             jatos.abortStudy("Consent not given.");
         });
     </script>
