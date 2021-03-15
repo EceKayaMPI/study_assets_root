@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title> Wobbles A </title>
+  <title> Wobbles B </title>
   <script src="ToneY.js"></script>
   <script src="jatos.js"></script>
   <script src="AMF_PID_1.js"></script>
@@ -47,7 +47,6 @@ function playVol(audio) {
       var audio_stims_1 = current_participant.stims_1;
       var audio_stims_2 = current_participant.stims_2;
       var audio_stims_3 = current_participant.stims_3;
-
 
       var participant_info = [];
       participant_info.pro_ID = prolific_id;
@@ -282,10 +281,10 @@ function playVol(audio) {
       // PROCEDURE =============================================================
 
       timeVar.push(welcomePage);
-      // timeVar.push(SMT_procedure);
-      // timeVar.push(sectDone);
-      // timeVar.push(instrucPages);
-      // timeVar.push(test_trials_1);
+      timeVar.push(SMT_procedure);
+      timeVar.push(sectDone);
+      timeVar.push(instrucPages);
+      timeVar.push(test_trials_1);
       timeVar.push(break_trial);
       timeVar.push(test_trials_2);
       timeVar.push(break_trial);
