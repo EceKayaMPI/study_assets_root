@@ -1,11 +1,11 @@
-jsPsych.plugins['PLAY-slider-response'] = (function() {
+jsPsych.plugins['WOBSINE-slider-response'] = (function() {
   var plugin = {};
 
   //jsPsych.pluginAPI.registerPreload('WOB-slider-response', 'stimulus', 'audio');
   //jsPsych.pluginAPI.registerPreload('WOB-slider-response');
 
   plugin.info = {
-    name: 'PLAY-slider-response',
+    name: 'WOBSINE-slider-response',
     description: '',
     parameters: {
 
@@ -83,8 +83,8 @@ jsPsych.plugins['PLAY-slider-response'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     // HTML ------------------------------------------------------------
-    var html = '<div id="jspsych-PLAY-slider-response-wrapper" style="margin: 100px 0px;">';
-    html += '<div class="jspsych-PLAY-slider-response-container" style="position:relative; margin: 0 auto 3em auto; ';
+    var html = '<div id="jspsych-WOB-slider-response-wrapper" style="margin: 100px 0px;">';
+    html += '<div class="jspsych-WOB-slider-response-container" style="position:relative; margin: 0 auto 3em auto; ';
     if (trial.slider_width !== null) {
       html += 'width:' + trial.slider_width + 'px;';
     }
@@ -110,59 +110,49 @@ jsPsych.plugins['PLAY-slider-response'] = (function() {
 
     display_element.innerHTML = html;
 
-    // // wobble noise ------------------------------------------------------------
-    // const noise = new Tone.Noise({
-    //   type: 'white',
-    //   volume: -24,
-    //   channelCount: 1,
-    // }).toMaster();
-    //
-    // const noiseFilter = new Tone.LFO({
-    //   frequency: trial.start,
-    //   min: -100,
-    //   max: -24,
-    //   channelCount: 1,
-    // }).connect(noise.volume);
-    //
-    // noiseFilter.start();
-    // noise.start();
+    // wobble noise ------------------------------------------------------------
+    const noise = new Tone.Oscillator({
+      type: 'sine',
+      frequency: 300,
+      volume: -24,
+      channelCount: 1,
+    }).toMaster();
 
-    var semitones = 5;
-    var source = new Tone.Player({
-      url: "https://tonejs.github.io/audio/loop/FWDL.mp3",
-      loop: true,
-      loopStart: 0,
-      loopEnd: 1,
-    });
-    var shift = new Tone.PitchShift(semitones);
-    source.connect(shift);
-    shift.toMaster();
+    const noiseFilter = new Tone.LFO({
+      frequency: trial.start,
+      min: -100,
+      max: -24,
+      channelCount: 1,
+    }).connect(noise.volume);
 
-
+    noiseFilter.start();
+    noise.start();
 
     // response ------------------------------------------------------------
     var response = {
-      rt: null,
-      response: null
+      rt: [],
+      response: null,
+      trajec: [],
     }; // add freq value l
+
     if (trial.require_movement) {
       display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('click', function() {
         display_element.querySelector('#jspsych-audio-slider-response-next').disabled = false;
 
       })
     }
+
     // 'continue' button CLICK ------------
     display_element.querySelector('#jspsych-audio-slider-response-next').addEventListener('click', function() {
-
 
       // measure response time
       var endTime = performance.now();
       var rt = endTime - startTime;
 
-      response.rt = rt;
-      response.response = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+      response.rt.push(rt);
 
-      source.stop();
+      noise.stop();
+      noiseFilter.stop();
 
       if (trial.response_ends_trial) {
         end_trial();
@@ -172,31 +162,26 @@ jsPsych.plugins['PLAY-slider-response'] = (function() {
     });
 
     // slider CHANGE ------------------------------------------
-    display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('change', function() {
+    display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('mousemove', function() {
       //	noise.volume.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
-      source.start();
-      shift = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+      noiseFilter.frequency.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+      response.trajec.push(noiseFilter.frequency.value);
+
     });
 
-    console.log(semitones)
-
-
-
-
-
-
-
-
-
-
-    function end_trial() {
-      jsPsych.pluginAPI.clearAllTimeouts();
 
 			// save data
       var trialdata = {
         "rt": response.rt,
-        "response": response.response
+        "sldr_start": trial.start,
+        "sldr_trajec": response.trajec
       };
+
+
+      function end_trial() {
+        jsPsych.pluginAPI.clearAllTimeouts();
+
+
       display_element.innerHTML = '';
 
 			// next trial

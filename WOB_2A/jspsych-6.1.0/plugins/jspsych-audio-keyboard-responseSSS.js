@@ -8,14 +8,14 @@
  *
  **/
 
-jsPsych.plugins["audio-keyboard-response"] = (function() {
+jsPsych.plugins["audio-keyboard-responseSSS"] = (function() {
 
   var plugin = {};
 
-  jsPsych.pluginAPI.registerPreload('audio-keyboard-response', 'stimulus', 'audio');
+  jsPsych.pluginAPI.registerPreload('audio-keyboard-responseSSS', 'stimulus', 'audio');
 
   plugin.info = {
-    name: 'audio-keyboard-response',
+    name: 'audio-keyboard-responseSSS',
     description: '',
     parameters: {
       stimulus: {
@@ -66,18 +66,13 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
       var source = context.createBufferSource();
       source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
       source.connect(context.destination);
-      var sound_dur = source.buffer.duration;
     } else {
       var audio = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
       audio.currentTime = 0;
     }
 
-    if (trial.trial_duration == null) {
-        trial.trial_duration = sound_dur;
-        // console.log(trial.trial_duration);
-    }
-
     // set up end event if trial needs it
+
     if(trial.trial_ends_after_audio){
       if(context !== null){
         source.onended = function() {
@@ -95,7 +90,7 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
 
     // store response
     var response = {
-      rt: null,
+      rt: [],
       key: null
     };
 
@@ -119,11 +114,11 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
       jsPsych.pluginAPI.cancelAllKeyboardResponses();
 
       // gather the data to store for the trial
-      if(context !== null && response.rt !== null){
-        response.rt = Math.round(response.rt * 1000);
-      }
+      //if(context !== null && response.rt !== null){
+      //  response.rt = Math.round(response.rt * 1000);
+      //}
       var trial_data = {
-        "rt": response.rt,
+        "tap_times": response.rt,
         "stimulus": trial.stimulus,
         "key_press": response.key
       };
@@ -138,28 +133,14 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
     // function to handle responses by the subject
     var after_response = function(info) {
 
-      // only record the first response
-      if (response.key == null) {
-        response = info;
-      }
+      response.rt.push(Math.round(info.rt * 1000));
 
-// wait for response AND trial duration to end trial
       if (trial.response_ends_trial) {
-
-        if(response.rt > trial.trial_duration){
+        if (response.rt.length > 31) { // at least 31 taps to end trial
         end_trial();
-
-      } else { // keypress before audio end
-
-          jsPsych.pluginAPI.setTimeout(function(){
-            end_trial();
-          }, (Math.round((trial.trial_duration - response.rt)*1000)) + 50);
-
         }
       }
     };
-
-// trial start -------------------------------------------
 
     // start audio
     if(context !== null){
@@ -175,7 +156,7 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
         callback_function: after_response,
         valid_responses: trial.choices,
         rt_method: 'audio',
-        persist: false,
+        persist: true,
         allow_held_key: false,
         audio_context: context,
         audio_context_start_time: startTime
@@ -185,17 +166,17 @@ jsPsych.plugins["audio-keyboard-response"] = (function() {
         callback_function: after_response,
         valid_responses: trial.choices,
         rt_method: 'performance',
-        persist: false,
+        persist: true,
         allow_held_key: false
       });
     }
 
-    //// end trial if time limit is set
-    //if (trial.trial_duration !== null) {
-    //  jsPsych.pluginAPI.setTimeout(function() {
-    //    end_trial();
-    //  }, trial.trial_duration);
-    //}
+    // end trial if time limit is set
+    if (trial.trial_duration !== null) {
+      jsPsych.pluginAPI.setTimeout(function() {
+        end_trial();
+      }, trial.trial_duration);
+    }
 
   };
 

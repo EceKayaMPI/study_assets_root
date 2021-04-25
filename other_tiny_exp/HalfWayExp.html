@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title> Wobbles 2B </title>
+  <title> SMT </title>
   <script src="ToneY.js"></script>
   <script src="jatos.js"></script>
-  <script src="AMF_PID_1.js"></script>
-  <script src="AMF_audiofiles.js"></script>
   <script src="jspsych-6.1.0/jspsych.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-fullscreen.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
@@ -20,79 +19,30 @@
   <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
   </link>
 </head>
+
 <body></body>
 <script>
 
-var wobaudio = new Audio("stimfiles/AMF_wobb_ex.wav");
-var noisaudio = new Audio("stimfiles/AMF_sine_ex.wav");
-var volaudio = new Audio("stimfiles/AMF_setVol_ex.wav");
-
-function playVol(audio) {
-  audio.play();
-};
+var audio_files = [
+	"silence.wav"
+];
 
   jatos.onLoad(function() {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     function init_experiment() {
 
       // VARIABLES ==================================================================
-      // infovar @ AMJS_INFO_ALL.js
-      // audio_files @ AMJS_audiofiles.js
 
       var prolific_id = jatos.urlQueryParameters.prolific_id
       var pt_index = jatos.batchSession.get(prolific_id)
       // console.log(pt_index)
 
-      var current_participant = infovar[pt_index];
-      var audio_stims_1 = current_participant.stims_1;
-      var audio_stims_2 = current_participant.stims_2;
-      var audio_stims_3 = current_participant.stims_3;
-
-      var participant_info = [];
-      participant_info.pro_ID = prolific_id;
-      participant_info.pt_index = pt_index;
-      // console.log(participant_info)
-
       var timeVar = [];
-
-      var id_check = {
-        type: 'html-button-response',
-        choices: ['Continue', 'Abort'],
-        stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click &#39abort&#39 and contact us in Prolific.</p>',
-        on_finish: function(data) {
-          if (data.button_pressed == 1) {
-            jatos.abortStudy();
-            }
-          },
-        }
-        timeVar.push(id_check)
-        timeVar.push({
-            type: 'fullscreen',
-            fullscreen_mode: true
-          });
-
-          ///&#39
-
-
-          var headphonequery = {
-            type: 'survey-text',
-            questions: [
-              {prompt: "What is the brand and model of the headphones you are using for this experiment?", name: 'HeadphoneINFO'},
-            ],
-          };
-          timeVar.push(headphonequery)
-
-      // general instructions etc -------------------------------- << pages
-      var welcomePage = {
-        type: 'html-button-response',
-        stimulus: '<p style="font-size:30px;">WELCOME!</p><br>' +
-          '<p>In this experiment, you will be asked to perform three kinds of tasks.</p>' +
-          '<p>First, you will be asked to tap on the keyboard witout listening to any sound. This will be repeated later as well.</p>' +
-          '<p>Then, you will be instructed about another procedure where you will hear sounds and press keys accordingly.</p>' +
-          '<p>Finally, you will be asked to adjust some properties of the incoming sounds by moving a slider.</p>' +
-          '<p>The whole session is expected to take approximately 60 minutes. A break option will be given two times through the experiment.<br><br><br></p>',
-        choices: ['Continue']
-      }
+      // make fullscreen
+      timeVar.push({
+          type: 'fullscreen',
+          fullscreen_mode: true
+        });
 
       // SMT trials --------------------------------------- << 30 taps
       var tapSMTinstruc = {
@@ -100,9 +50,9 @@ function playVol(audio) {
         stimulus: '<pstyle="font-size:20px;">TAPPING</p><br>' +
           '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
 
-          '<div style="display:table-cell; vertical-align:middle; text-align:center">'+
-          '<img src="key_t.png">'+
-          '</div>'+
+          '<div style="display:table-cell; vertical-align:middle; text-align:center">' +
+          '<img src="key_t.png">' +
+          '</div>' +
 
           '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
           '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
@@ -111,7 +61,7 @@ function playVol(audio) {
       };
       var tapSMTcomfy = {
         type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
-        stimulus: 'stimfiles/silence.wav',
+        stimulus: 'silence.wav',
         choices: 't',
         prompt: "<p>Please tap on the T key regularly, at a rate that is the most comfortable for you to maintain.</p>",
         response_ends_trial: true,
@@ -120,7 +70,7 @@ function playVol(audio) {
       };
       var tapSMTfast = {
         type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
-        stimulus: 'stimfiles/silence.wav',
+        stimulus: 'silence.wav',
         choices: 't',
         prompt: "<p>Please tap on the T key regularly, at the FASTEST rate that is comfortable for you to maintain.</p>",
         response_ends_trial: true,
@@ -129,7 +79,7 @@ function playVol(audio) {
       };
       var tapSMTslow = {
         type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
-        stimulus: 'stimfiles/silence.wav',
+        stimulus: 'silence.wav',
         choices: 't',
         prompt: "<p>Please tap on the T key regularly, at the SLOWEST rate that is comfortable for you to maintain.</p>",
         response_ends_trial: true,
@@ -146,7 +96,6 @@ function playVol(audio) {
         repetitions: 1,
         randomize_order: false,
       }
-
       var tapSMTrepeat = {
         type: 'html-button-response',
         stimulus: '<pstyle="font-size:20px;">TAPPING</p><br>' +
@@ -162,67 +111,15 @@ function playVol(audio) {
         randomize_order: false,
       }
 
-      // instructions etc ---------------------------------------
-
-      var instrucPages = {
-        type: 'instructions', // modified >> pauses wobaudio, noisaudio...
-        pages: [
-          '<p>Now, please turn down your volume and then click the button below.<br></p>' +
-          '<button onclick="playVol(volaudio)"> play sound </button>' +
-          '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
-          '<p style="color:#FF0000";>Please keep in mind that you should not change the volume throughout the experiment !</p>' +
-          '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
-          '<p>Once it is set, click &#39next&#39.<br><br></p>',
-
-          '<p>In the following section, you will hear different sounds.</p>' +
-          '<p>Some sounds will have fluctations in amplitude, which we will call WOBBLES. Some sounds will not have wobbles, which we will call NO WOBBLES.</p>' +
-
-          '<div style="width: 100%; height: 500px;">' +
-
-          '<div style="float: right; width: 300px;">' +
-          '<p>Click on the N buttton to hear an example NO WOBBLE sound. </p>' +
-          '<img src="key_n.png" onclick="playVol(noisaudio)"></img>' +
-          '<p>When you hear this, press N key.</p></div>' +
-
-          '<div style="float: left; width: 300px;">' +
-          '<p>Click on the W buttton to hear an example WOBBLE sound. </p>' +
-          '<img src="key_w.png" onclick="playVol(wobaudio)"></img>' +
-          '<p>When you hear this or its variations, press W key.</p></div>' +
-
-          '</div>' +
-
-          '<div><p>If you understood the task, <strong style="color: red;">click &#39next&#39 to start the experiment.</strong><br></p></div>',
-
-        ],
-        show_clickable_nav: true
-      };
-
-      // Test TRIALS ---------------------------------------------------------------
-      var test_trials_1 = {
-        type: 'audio-keyboard-response', //modified version >> see git history
-        timeline: audio_stims_1,
-        choices: ['w', 'n'],
-        prompt: '<p style="font-size:60px;">+</p>',
-        response_ends_trial: true,
-      };
-
-      var test_trials_2 = {
-        type: 'audio-keyboard-response', //modified version >> see git history
-        timeline: audio_stims_2,
-        choices: ['w', 'n'],
-        prompt: '<p style="font-size:60px;">+</p>',
-        response_ends_trial: true,
-      };
-
-      var test_trials_3 = {
-        type: 'audio-keyboard-response', //modified version >> see git history
-        timeline: audio_stims_3,
-        choices: ['w', 'n'],
-        prompt: '<p style="font-size:60px;">+</p>',
-        response_ends_trial: true,
-      };
-
       // Other trials ---------------------------------------------------------------
+      var welcomePage = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">WELCOME!</p><br>' +
+          '<p>In this experiment, you will be asked to perform different tasks.</p>' +
+          '<p>First, you will be asked to tap on the keyboard witout listening to any sound.</p>' +
+          '<p>Then, you will be asked to adjust some properties of the incoming sounds by moving a slider.<br><br><br></p>',
+        choices: ['Continue']
+      }
       var sectDone = {
         type: 'html-button-response',
         stimulus: '<p>You have completed this section. Click &#39continue&#39 to proceed. </p>',
@@ -240,6 +137,13 @@ function playVol(audio) {
           '<p>You have completed the experiment.</p>' +
           '<p>Click &#39continue&#39 to close the experiment and proceed to Prolific.</p>',
         choices: ['Continue']
+      };
+      var headphonequery = {
+        type: 'survey-text',
+        questions: [{
+          prompt: "What is the brand and model of the headphones you are using for this experiment?",
+          name: 'HeadphoneINFO'
+        }, ],
       };
 
       // WOB-slider trials  ----------------------------------------------------
@@ -273,21 +177,15 @@ function playVol(audio) {
       };
       var sliderTrials = {
         timeline: [sliderTrialmax, sliderTrialmin],
-        repetitions: 6,
+        repetitions: 1,
         randomize_order: false,
       }
 
       // PROCEDURE =============================================================
 
+      timeVar.push(headphonequery)
       timeVar.push(welcomePage);
       timeVar.push(SMT_procedure);
-      timeVar.push(sectDone);
-      timeVar.push(instrucPages);
-      timeVar.push(test_trials_1);
-      timeVar.push(break_trial);
-      timeVar.push(test_trials_2);
-      timeVar.push(break_trial);
-      timeVar.push(test_trials_3);
       timeVar.push(sectDone);
       timeVar.push(sliderInstruc);
       timeVar.push(sliderTrials);
@@ -295,7 +193,6 @@ function playVol(audio) {
       timeVar.push(SMT_repeat);
       timeVar.push(thxbye);
 
-      // console.log(timeVar);
 
       // EXPERIMENT INIT =======================================================
       jsPsych.init({
@@ -305,16 +202,16 @@ function playVol(audio) {
           var resultCSV = jsPsych.data.get().csv();
           var closed_data = jatos.uploadResultFile(resultCSV, 'data_closed.csv');
         },
-          on_finish: function() {
-            var interaction_data = jsPsych.data.getInteractionData();
-            jatos.uploadResultFile(interaction_data, 'interac.csv');
-            var resultCSV = jsPsych.data.get().csv();
-            var full_data = jatos.uploadResultFile(resultCSV, 'data.csv');
+        on_finish: function() {
+          var interaction_data = jsPsych.data.getInteractionData();
+          jatos.uploadResultFile(interaction_data, 'interac.csv');
+          var resultCSV = jsPsych.data.get().csv();
+          var full_data = jatos.uploadResultFile(resultCSV, 'data.csv');
 
-            jatos.endStudyAjax().then(() => {
+          jatos.endStudyAjax().then(() => {
             // Change this URL to the one you see in Prolific
             window.location.href = 'https://app.prolific.co/submissions/complete?cc=7A0BF2E1'
-            });
+          });
         },
       })
     } // end of init_experiment function

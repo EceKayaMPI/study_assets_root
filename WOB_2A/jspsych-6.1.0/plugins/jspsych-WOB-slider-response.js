@@ -1,18 +1,14 @@
-jsPsych.plugins['audio-slider-response'] = (function() {
-	var plugin = {};
+jsPsych.plugins['WOB-slider-response'] = (function() {
+  var plugin = {};
 
-	jsPsych.pluginAPI.registerPreload('audio-slider-response', 'stimulus', 'audio');
+  //jsPsych.pluginAPI.registerPreload('WOB-slider-response', 'stimulus', 'audio');
+  //jsPsych.pluginAPI.registerPreload('WOB-slider-response');
 
-	plugin.info = {
-		name: 'audio-slider-response',
-		description: '',
+  plugin.info = {
+    name: 'WOB-slider-response',
+    description: '',
     parameters: {
-      stimulus: {
-        type: jsPsych.plugins.parameterType.AUDIO,
-        pretty_name: 'Stimulus',
-        default: undefined,
-        description: 'The image to be displayed'
-      },
+
       min: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Min slider',
@@ -25,12 +21,12 @@ jsPsych.plugins['audio-slider-response'] = (function() {
         default: 100,
         description: 'Sets the maximum value of the slider',
       },
-			start: {
-				type: jsPsych.plugins.parameterType.INT,
-				pretty_name: 'Slider starting value',
-				default: 50,
-				description: 'Sets the starting value of the slider',
-			},
+      start: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Slider starting value',
+        default: 50,
+        description: 'Sets the starting value of the slider',
+      },
       step: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Step',
@@ -39,14 +35,14 @@ jsPsych.plugins['audio-slider-response'] = (function() {
       },
       labels: {
         type: jsPsych.plugins.parameterType.HTML_STRING,
-        pretty_name:'Labels',
+        pretty_name: 'Labels',
         default: [],
         array: true,
         description: 'Labels of the slider.',
       },
       slider_width: {
         type: jsPsych.plugins.parameterType.INT,
-        pretty_name:'Slider width',
+        pretty_name: 'Slider width',
         default: null,
         description: 'Width of the slider in pixels.'
       },
@@ -86,127 +82,112 @@ jsPsych.plugins['audio-slider-response'] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-    // setup stimulus
-    var context = jsPsych.pluginAPI.audioContext();
-    if(context !== null){
-      var source = context.createBufferSource();
-      source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
-      source.connect(context.destination);
-    } else {
-      var audio = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
-      audio.currentTime = 0;
-    }
-
-    // set up end event if trial needs it
-    if(trial.trial_ends_after_audio){
-      if(context !== null){
-        source.onended = function() {
-          end_trial();
-        }
-      } else {
-        audio.addEventListener('ended', end_trial);
-      }
-    }
-
-    var html = '<div id="jspsych-audio-slider-response-wrapper" style="margin: 100px 0px;">';
-  	html += '<div class="jspsych-audio-slider-response-container" style="position:relative; margin: 0 auto 3em auto; ';
-    if(trial.slider_width !== null){
-      html += 'width:'+trial.slider_width+'px;';
+    // HTML ------------------------------------------------------------
+    var html = '<div id="jspsych-WOB-slider-response-wrapper" style="margin: 100px 0px;">';
+    html += '<div class="jspsych-WOB-slider-response-container" style="position:relative; margin: 0 auto 3em auto; ';
+    if (trial.slider_width !== null) {
+      html += 'width:' + trial.slider_width + 'px;';
     }
     html += '">';
-    html += '<input type="range" value="'+trial.start+'" min="'+trial.min+'" max="'+trial.max+'" step="'+trial.step+'" style="width: 100%;" id="jspsych-audio-slider-response-response"></input>';
+    html += '<input type="range" value="' + trial.start + '" min="' + trial.min + '" max="' + trial.max + '" step="' + trial.step + '" style="width: 100%;" id="jspsych-audio-slider-response-response"></input>';
     html += '<div>'
-    for(var j=0; j < trial.labels.length; j++){
-      var width = 100/(trial.labels.length-1);
-      var left_offset = (j * (100 /(trial.labels.length - 1))) - (width/2);
-      html += '<div style="display: inline-block; position: absolute; left:'+left_offset+'%; text-align: center; width: '+width+'%;">';
-      html += '<span style="text-align: center; font-size: 80%;">'+trial.labels[j]+'</span>';
+    for (var j = 0; j < trial.labels.length; j++) {
+      var width = 100 / (trial.labels.length - 1);
+      var left_offset = (j * (100 / (trial.labels.length - 1))) - (width / 2);
+      html += '<div style="display: inline-block; position: absolute; left:' + left_offset + '%; text-align: center; width: ' + width + '%;">';
+      html += '<span style="text-align: center; font-size: 80%;">' + trial.labels[j] + '</span>';
       html += '</div>'
     }
     html += '</div>';
     html += '</div>';
     html += '</div>';
 
-		if (trial.prompt !== null){
-	    html += trial.prompt;
-		}
-
+    if (trial.prompt !== null) {
+      html += trial.prompt;
+    }
     // add submit button
-    html += '<button id="jspsych-audio-slider-response-next" class="jspsych-btn" '+ (trial.require_movement ? "disabled" : "") + '>'+trial.button_label+'</button>';
+    html += '<button id="jspsych-audio-slider-response-next" class="jspsych-btn" ' + (trial.require_movement ? "disabled" : "") + '>' + trial.button_label + '</button>';
 
     display_element.innerHTML = html;
 
+    // wobble noise ------------------------------------------------------------
+    const noise = new Tone.Noise({
+      type: 'white',
+      volume: -24,
+      channelCount: 1,
+    }).toMaster();
+
+    const noiseFilter = new Tone.LFO({
+      frequency: trial.start,
+      min: -100,
+      max: -24,
+      channelCount: 1,
+    }).connect(noise.volume);
+
+    noiseFilter.start();
+    noise.start();
+
+    // response ------------------------------------------------------------
     var response = {
       rt: null,
       response: null
-    };
+    }; // add freq value l
 
-    if(trial.require_movement){
-      display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('change', function(){
+    if (trial.require_movement) {
+      display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('click', function() {
         display_element.querySelector('#jspsych-audio-slider-response-next').disabled = false;
+
       })
     }
 
+    // 'continue' button CLICK ------------
     display_element.querySelector('#jspsych-audio-slider-response-next').addEventListener('click', function() {
+
       // measure response time
       var endTime = performance.now();
-			var rt = endTime - startTime;
-			if(context !== null){
-				endTime = context.currentTime;
-				rt = Math.round((endTime - startTime) * 1000);
-			}
+      var rt = endTime - startTime;
+
       response.rt = rt;
       response.response = display_element.querySelector('#jspsych-audio-slider-response-response').value;
 
-      if(trial.response_ends_trial){
+      noise.stop();
+      noiseFilter.stop();
+
+      if (trial.response_ends_trial) {
         end_trial();
       } else {
         display_element.querySelector('#jspsych-audio-slider-response-next').disabled = true;
       }
-
     });
 
-    function end_trial(){
+    // slider CHANGE ------------------------------------------
+    display_element.querySelector('#jspsych-audio-slider-response-response').addEventListener('mousemove', function() {
+      //	noise.volume.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+      noiseFilter.frequency.value = display_element.querySelector('#jspsych-audio-slider-response-response').value;
+    });
 
+
+    function end_trial() {
       jsPsych.pluginAPI.clearAllTimeouts();
 
-			if(context !== null){
-        source.stop();
-        source.onended = function() { }
-      } else {
-        audio.pause();
-        audio.removeEventListener('ended', end_trial);
-      }
-
-      // save data
+			// save data
       var trialdata = {
         "rt": response.rt,
-				"stimulus": trial.stimulus,
         "response": response.response
       };
-
       display_element.innerHTML = '';
 
-      // next trial
+			// next trial
       jsPsych.finishTrial(trialdata);
     }
 
-		var startTime = performance.now();
-		// start audio
-    if(context !== null){
-      startTime = context.currentTime;
-      source.start(startTime);
-    } else {
-      audio.play();
-    }
-
+    var startTime = performance.now();
     // end trial if trial_duration is set
     if (trial.trial_duration !== null) {
       jsPsych.pluginAPI.setTimeout(function() {
         end_trial();
       }, trial.trial_duration);
     }
-
 
   };
 

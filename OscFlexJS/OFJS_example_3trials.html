@@ -4,7 +4,7 @@
 <head>
   <title> Beat Continuation Experiment </title>
   <script src="jatos.js"></script>
-  <script src="OFJS_PID.js"></script>
+  <script src="OFJS_PID_3s.js"></script>
   <script src="OFJS_audiofiles.js"></script>
   <script src="jspsych-6.1.0/jspsych.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
@@ -45,17 +45,18 @@
     function init_experiment() {
 
       // VARIABLES ========================================================
+      var timeVar = [];
 
       var prolific_id = jatos.urlQueryParameters.prolific_id;
       var pt_index = jatos.batchSession.get(prolific_id);
-      console.log(pt_index)
 
-      var current_participant = info_OFJS_PID[pt_index];
+      var current_participant = info_OFJS_PID[0];
       var timeline_pt1 = current_participant.timevars_part1;
       var timeline_pt2 = current_participant.timevars_part2;
       var curr_prac = current_participant.prac_IOI;
+      console.log(timeline_pt1)
 
-      var timeVar = [];
+
       var nogoodgottago = 0;
 
       // INSTRUCTIONS ---------------------------------------
@@ -244,7 +245,7 @@
           '<p>You have completed the practice section.</p>' +
           '<p>In the following section, the pacing will be automated, and no feedback will be given. </p>' +
           '<p>Therefore, it is important that you keep concentrated to the task until the break, and then until the end.</p>' +
-          '<p>Please click the button below to proceed to the next section</p>',
+          '<p>Please click the button below to proceed to the experimental section</p>',
         choices: ['Start section'],
         on_start: function() {
           nogoodgottago = 0;
@@ -321,15 +322,15 @@
       }
 
       // PROCEDURE ========================================================
-      timeVar.push(helloo);
-      timeVar.push(SMT_procedure);
-      timeVar.push(instrucPages);
-      timeVar.push(practice_procedure);
+      // timeVar.push(helloo);
+      // timeVar.push(SMT_procedure);
+      // timeVar.push(instrucPages);
+      // timeVar.push(practice_procedure);
       timeVar.push(trialstart);
       timeVar.push(trial_iti_part1);
-      timeVar.push(break_trial);
-      timeVar.push(trial_iti_part2);
-      timeVar.push(SMT_repeat);
+      // timeVar.push(break_trial);
+      // timeVar.push(trial_iti_part2);
+      // timeVar.push(SMT_repeat);
       timeVar.push(thxbye);
 
       // EXPERIMENT INIT ========================================================
