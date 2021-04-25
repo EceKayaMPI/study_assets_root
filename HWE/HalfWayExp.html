@@ -2,15 +2,15 @@
 <html>
 
 <head>
-  <title> SMT </title>
-  <script src="ToneY.js"></script>
+  <title> HWE </title>
   <script src="jatos.js"></script>
+  <script src="HWE_PID.js"></script>
   <script src="jspsych-6.1.0/jspsych.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-fullscreen.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-taps.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-WOBSINE-slider-response.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-audio-button-response.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-responseSSS.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
@@ -24,7 +24,12 @@
 <script>
 
 var audio_files = [
-	"silence.wav"
+	"silence.wav",
+	"400_ms.wav",
+	"500_ms.wav",
+	"600_ms.wav",
+	"700_ms.wav",
+	"800_ms.wav",
 ];
 
   jatos.onLoad(function() {
@@ -38,11 +43,70 @@ var audio_files = [
       // console.log(pt_index)
 
       var timeVar = [];
-      // make fullscreen
-      timeVar.push({
-          type: 'fullscreen',
-          fullscreen_mode: true
-        });
+      // make fullscreen -------------
+      // timeVar.push({
+      //     type: 'fullscreen',
+      //     fullscreen_mode: true
+      //   });
+
+      var curr_list = info_HWE[0];
+      var stimlist = curr_list.timevars;
+      // console.log(stimlist);
+
+      var hello = {
+        type: 'html-button-response',
+        stimulus: '<p>Hi</p>',
+        choices: ['Continue']
+      };
+      timeVar.push(hello);
+
+      var trialexamp =
+        {
+        type: 'audio-keyboard-taps',
+        stimulus: 'silence.wav',
+        choices: 't',
+        prompt: "<p> tap on T </p>",
+        response_ends_trial: true,
+        number_of_taps_required: 20,
+        post_trial_gap: 500,
+      };
+      timeVar.push(trialexamp);
+
+      var trials = {
+        timeline: [
+          {
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stim_1'),
+            choices: jsPsych.NO_KEYS,
+            prompt: "<p> listen 1 </p>",
+            response_ends_trial: false,
+            trial_ends_after_audio: true,
+            post_trial_gap: 1500,
+          },
+          {
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stim_2'),
+            choices: jsPsych.NO_KEYS,
+            prompt: "<p> listen 2 </p>",
+            response_ends_trial: false,
+            trial_ends_after_audio: true,
+            post_trial_gap: 1500,
+          },
+          {
+            type: 'audio-keyboard-taps',
+            stimulus: 'silence.wav',
+            choices: 't',
+            prompt: "<p> tap on T with a pace which is the midway between these two</p>",
+            response_ends_trial: true,
+            number_of_taps_required: 20,
+            post_trial_gap: 500,
+          }
+        ],
+        timeline_variables: stimlist,
+        randomize_order: false,
+      };
+      console.log(trials);
+      timeVar.push(trials);
 
       // SMT trials --------------------------------------- << 30 taps
       var tapSMTinstruc = {
@@ -183,20 +247,22 @@ var audio_files = [
 
       // PROCEDURE =============================================================
 
-      timeVar.push(headphonequery)
-      timeVar.push(welcomePage);
-      timeVar.push(SMT_procedure);
-      timeVar.push(sectDone);
-      timeVar.push(sliderInstruc);
-      timeVar.push(sliderTrials);
-      timeVar.push(sectDone);
-      timeVar.push(SMT_repeat);
+      // timeVar.push(headphonequery)
+      // timeVar.push(welcomePage);
+      // timeVar.push(SMT_procedure);
+      // timeVar.push(sectDone);
+      // timeVar.push(sliderInstruc);
+      // timeVar.push(sliderTrials);
+      // timeVar.push(sectDone);
+      // timeVar.push(SMT_repeat);
+      // timeVar.push(trials);
       timeVar.push(thxbye);
 
 
       // EXPERIMENT INIT =======================================================
       jsPsych.init({
         timeline: timeVar,
+        preload_audio: audio_files,
         default_iti: 550,
         on_close: function() {
           var resultCSV = jsPsych.data.get().csv();

@@ -48,7 +48,7 @@
 
       var prolific_id = jatos.urlQueryParameters.prolific_id;
       var pt_index = jatos.batchSession.get(prolific_id);
-      console.log(pt_index)
+
 
       var current_participant = info_OFJS_PID[pt_index];
       var timeline_pt1 = current_participant.timevars_part1;
@@ -280,6 +280,8 @@
         timeline_variables: timeline_pt1,
         randomize_order: false,
       }
+
+      console.log(trial_iti_part1)
       var break_trial = {
         type: 'html-button-response',
         stimulus: '<p style="font-size:30px;">Break!</p>' +
@@ -321,10 +323,10 @@
       }
 
       // PROCEDURE ========================================================
-      timeVar.push(helloo);
-      timeVar.push(SMT_procedure);
-      timeVar.push(instrucPages);
-      timeVar.push(practice_procedure);
+      // timeVar.push(helloo);
+      // timeVar.push(SMT_procedure);
+      // timeVar.push(instrucPages);
+      // timeVar.push(practice_procedure);
       timeVar.push(trialstart);
       timeVar.push(trial_iti_part1);
       timeVar.push(break_trial);
