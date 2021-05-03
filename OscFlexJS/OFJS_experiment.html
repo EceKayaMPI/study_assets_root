@@ -82,9 +82,9 @@
           '<img src="key_tap.png">' +
           '</div>' +
 
-          '<p>On each trial, you will hear a sequence of five sounds. Your task is to start tapping along with the sounds, and ' +
-          'then keep going at the same rate once the sounds stop. You should keep tapping as evenly as possible until the ' +
-          'screen changes color.</p>', // instruction1
+          '<p>On each trial, you will hear a sequence of five sounds.<br></p>'+
+          '<p style="color:#BE5008;font-weight:bold">Your task is to start tapping along with the sounds, and then keep going at the same rate once the sounds stop.<br></p>'+
+          '<p>You should keep tapping as evenly as possible until the screen changes color.</p>', // instruction1
 
           '<div style="text-align:center">' +
           '<img src="ofjs-small.png">' +
@@ -191,13 +191,13 @@
                 feedback_text.push('No taps detected!<br><br>');
                 nogoodgottago++;
               } else { // if there are taps,
-                if (data.tap_times.length < 9) { // check how many, if less than 9:
+                if (data.tap_times.length < 10) { // check how many, if less than 9:
                   feedback_text.push('Not enough number of taps detected!<br>Please start tapping as soon as you hear the sound and keep going until the screen changes color.<br><br>');
                 }
                 else { // if number of taps is fine,
                   var tap_ioi = calc_ioi_med(data.tap_times); // calculate their ioi
 
-                  if (tap_ioi > curr_stim_ioi * 1.2) {
+                  if (tap_ioi > curr_stim_ioi * 1.5) {
                     feedback_text.push('You were too slow!<br><br>');
                   } else if (tap_ioi < curr_stim_ioi * 0.8) {
                     feedback_text.push('You were too fast!<br><br>');
@@ -323,10 +323,10 @@
       }
 
       // PROCEDURE ========================================================
-      // timeVar.push(helloo);
-      // timeVar.push(SMT_procedure);
-      // timeVar.push(instrucPages);
-      // timeVar.push(practice_procedure);
+      timeVar.push(helloo);
+      timeVar.push(SMT_procedure);
+      timeVar.push(instrucPages);
+      timeVar.push(practice_procedure);
       timeVar.push(trialstart);
       timeVar.push(trial_iti_part1);
       timeVar.push(break_trial);
