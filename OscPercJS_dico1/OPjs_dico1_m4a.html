@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> opjs_dico_test </title>
+  <!-- <script src="ToneY.js"></script> -->
+  <script src="jatos.js"></script>
+  <!-- <script src="AMF_PID_1.js"></script> -->
+  <!-- <script src="AMF_audiofiles.js"></script> -->
+  <script src="jspsych-6.3.1/jspsych.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-fullscreen.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-audio-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-button-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-responseSSS.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+</head>
+<body></body>
+<script>
+
+var left_audio = new Audio("stimfiles/seq_left.m4a");
+var right_audio = new Audio("stimfiles/seq_right.m4a");
+var volaudio = new Audio("stimfiles/set_vol_tone.m4a");
+
+function playVol(audio) {
+  audio.play();
+};
+
+  jatos.onLoad(function() {
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    function init_experiment() {
+
+      // VARIABLES ==================================================================
+      var timeVar = [];
+
+      var audio_files = [
+        "stimfiles/S_0.200_L_0.200_R_0.180.m4a",
+        "stimfiles/S_0.200_L_0.180_R_0.200.m4a",
+        "stimfiles/S_0.200_L_0.200_R_0.220.m4a",
+        "stimfiles/S_0.200_L_0.220_R_0.200.m4a",
+        "stimfiles/S_0.250_L_0.250_R_0.225.m4a",
+        "stimfiles/S_0.250_L_0.225_R_0.250.m4a",
+        "stimfiles/S_0.250_L_0.250_R_0.275.m4a",
+        "stimfiles/S_0.250_L_0.275_R_0.250.m4a",
+        "stimfiles/S_0.300_L_0.300_R_0.270.m4a",
+        "stimfiles/S_0.300_L_0.270_R_0.300.m4a",
+        "stimfiles/S_0.300_L_0.300_R_0.330.m4a",
+        "stimfiles/S_0.300_L_0.330_R_0.300.m4a",
+        "stimfiles/S_0.350_L_0.350_R_0.315.m4a",
+        "stimfiles/S_0.350_L_0.315_R_0.350.m4a",
+        "stimfiles/S_0.350_L_0.350_R_0.385.m4a",
+        "stimfiles/S_0.350_L_0.385_R_0.350.m4a",
+        "stimfiles/S_0.400_L_0.400_R_0.360.m4a",
+        "stimfiles/S_0.400_L_0.360_R_0.400.m4a",
+        "stimfiles/S_0.400_L_0.400_R_0.440.m4a",
+        "stimfiles/S_0.400_L_0.440_R_0.400.m4a",
+        "stimfiles/S_0.450_L_0.450_R_0.405.m4a",
+        "stimfiles/S_0.450_L_0.405_R_0.450.m4a",
+        "stimfiles/S_0.450_L_0.450_R_0.495.m4a",
+        "stimfiles/S_0.450_L_0.495_R_0.450.m4a",
+        "stimfiles/S_0.500_L_0.500_R_0.450.m4a",
+        "stimfiles/S_0.500_L_0.450_R_0.500.m4a",
+        "stimfiles/S_0.500_L_0.500_R_0.550.m4a",
+        "stimfiles/S_0.500_L_0.550_R_0.500.m4a",
+        ];
+
+      var stimz = [
+        {stimulus:"stimfiles/S_0.200_L_0.200_R_0.180.m4a"},
+        {stimulus:"stimfiles/S_0.200_L_0.180_R_0.200.m4a"},
+        {stimulus:"stimfiles/S_0.200_L_0.200_R_0.220.m4a"},
+        {stimulus:"stimfiles/S_0.200_L_0.220_R_0.200.m4a"},
+        {stimulus:"stimfiles/S_0.250_L_0.250_R_0.225.m4a"},
+        {stimulus:"stimfiles/S_0.250_L_0.225_R_0.250.m4a"},
+        {stimulus:"stimfiles/S_0.250_L_0.250_R_0.275.m4a"},
+        {stimulus:"stimfiles/S_0.250_L_0.275_R_0.250.m4a"},
+        {stimulus:"stimfiles/S_0.300_L_0.300_R_0.270.m4a"},
+        {stimulus:"stimfiles/S_0.300_L_0.270_R_0.300.m4a"},
+        {stimulus:"stimfiles/S_0.300_L_0.300_R_0.330.m4a"},
+        {stimulus:"stimfiles/S_0.300_L_0.330_R_0.300.m4a"},
+        {stimulus:"stimfiles/S_0.350_L_0.350_R_0.315.m4a"},
+        {stimulus:"stimfiles/S_0.350_L_0.315_R_0.350.m4a"},
+        {stimulus:"stimfiles/S_0.350_L_0.350_R_0.385.m4a"},
+        {stimulus:"stimfiles/S_0.350_L_0.385_R_0.350.m4a"},
+        {stimulus:"stimfiles/S_0.400_L_0.400_R_0.360.m4a"},
+        {stimulus:"stimfiles/S_0.400_L_0.360_R_0.400.m4a"},
+        {stimulus:"stimfiles/S_0.400_L_0.400_R_0.440.m4a"},
+        {stimulus:"stimfiles/S_0.400_L_0.440_R_0.400.m4a"},
+        {stimulus:"stimfiles/S_0.450_L_0.450_R_0.405.m4a"},
+        {stimulus:"stimfiles/S_0.450_L_0.405_R_0.450.m4a"},
+        {stimulus:"stimfiles/S_0.450_L_0.450_R_0.495.m4a"},
+        {stimulus:"stimfiles/S_0.450_L_0.495_R_0.450.m4a"},
+        {stimulus:"stimfiles/S_0.500_L_0.500_R_0.450.m4a"},
+        {stimulus:"stimfiles/S_0.500_L_0.450_R_0.500.m4a"},
+        {stimulus:"stimfiles/S_0.500_L_0.500_R_0.550.m4a"},
+        {stimulus:"stimfiles/S_0.500_L_0.550_R_0.500.m4a"},
+      ];
+
+
+      // general instructions etc -------------------------------- << pages
+
+      var welcomePage = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">WELCOME!</p><br>',
+          // '<p>In this experiment, you will be asked to perform three kinds of tasks.</p>' +
+          // '<p>First, you will be asked to tap on the keyboard witout listening to any sound. This will be repeated later as well.</p>' +
+          // '<p>Then, you will be instructed about another procedure where you will hear sounds and press keys accordingly.</p>' +
+          // '<p>Finally, you will be asked to adjust some properties of the incoming sounds by moving a slider.</p>' +
+          // '<p>The whole session is expected to take approximately 60 minutes. A break option will be given two times through the experiment.<br><br><br></p>',
+        choices: ['Continue']
+      }
+
+      // instructions etc ---------------------------------------
+
+      var instrucPages = {
+        type: 'instructions', // modified >> pauses wobaudio, noisaudio...
+        pages: [
+          '<p style="font-size:30px;">INSTRUCTIONS</p><br>'+
+          // '<p>Now, please turn down your volume and then click the button below.<br></p>' +
+          // '<button onclick="playVol(volaudio)"> play sound </button>' +
+          // '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
+          // '<p style="color:#FF0000";>Please keep in mind that you should not change the volume throughout the experiment !</p>' +
+          // '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
+          // '<p>Once it is set, click &#39next&#39.<br><br></p>',
+
+          '<p>In the following section, you will hear pairs of sounds.</p>' +
+          '<p>Each of your ears will hear different kinds of sounds.</p>' +
+          '<p>You will first hear sounds from both ears at the same time.</p>' +
+          '<p>After silence, sounds coming from one ear will be the same as the sounds you heard before silence.</p>' +
+          '<p>Sounds coming from the other ear will be faster or slower than the sounds you heard before silence.</p>' +
+          '<p>Your task is to detect which sound is the same as the one you heard before silence.</p>' +
+
+          '<div style="width: 100%; height: 500px;">' +
+
+          '<div style="float: left; width: 300px;">' +
+          '<p>Click on the A buttton to hear an example the sound you will hear from your LEFT ear. </p>' +
+          '<img src="key_a.png" onclick="playVol(left_audio)"></img>' +
+          '<p>After hearing the sound pairs, if the second sound is the same as the first sound in your LEFT ear, press this key. </p></div>' +
+
+          '<div style="float: right; width: 300px;">' +
+          '<p>Click on the D buttton to hear an example the sound you will hear from your RIGHT ear. </p>' +
+          '<img src="key_d.png" onclick="playVol(right_audio)"></img>' +
+          '<p>After hearing the sound pairs, if the second sound is the same as the first sound in your RIGHT ear, press this key. </p></div>' +
+
+          '</div>' +
+
+          '<div><p>If you understood the task, <strong style="color: red;">click &#39next&#39 to start the experiment.</strong><br></p></div>',
+
+        ],
+        show_clickable_nav: true
+      };
+
+      // Test TRIALS ---------------------------------------------------------------
+
+      var trial = {
+        type: 'audio-keyboard-response', // 6.3.1
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: ['a', 'd'],
+        prompt: '<p style="font-size:60px;">+</p>',
+        response_ends_trial: true,
+        response_allowed_while_playing: false,
+      };
+
+      var test_trials_rand = {
+        timeline: [trial],
+        timeline_variables: stimz,
+        randomize_order: true,
+      };
+
+      // Other trials ---------------------------------------------------------------
+      var break_trial = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">Break!</p>' +
+          '<p><br>Click &#39continue&#39 to proceed.</p>',
+        choices: ['Continue']
+      }
+      var thxbye = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">Thank you!</p>' +
+          '<p>You have completed the experiment.</p>',
+        choices: ['Close']
+      };
+
+console.log(stimz);
+
+      // PROCEDURE =============================================================
+
+      timeVar.push(welcomePage);
+      timeVar.push(instrucPages);
+      timeVar.push(test_trials_rand);
+      timeVar.push(break_trial);
+      timeVar.push(test_trials_rand);
+      timeVar.push(break_trial);
+      timeVar.push(test_trials_rand);
+      timeVar.push(break_trial);
+      timeVar.push(test_trials_rand);
+      timeVar.push(break_trial);
+      timeVar.push(test_trials_rand);
+      timeVar.push(break_trial);
+      timeVar.push(test_trials_rand);
+      timeVar.push(thxbye);
+
+      // console.log(timeVar);
+
+      // EXPERIMENT INIT =======================================================
+      jsPsych.init({
+        timeline: timeVar,
+        default_iti: 550,
+        preload_audio: audio_files,
+        use_webaudio: false,
+        on_close: function() {
+          var resultCSV = jsPsych.data.get().csv();
+          var closed_data = jatos.uploadResultFile(resultCSV, 'data_closed.csv');
+          window.location.href = 'https://i.gifer.com/7Y4b.gif'
+        },
+          on_finish: function() {
+            var interaction_data = jsPsych.data.getInteractionData();
+            jatos.uploadResultFile(interaction_data, 'interac.csv');
+            var resultCSV = jsPsych.data.get().csv();
+            var full_data = jatos.uploadResultFile(resultCSV, 'data.csv');
+
+            jatos.endStudyAjax().then(() => {
+            // Change this URL to the one you see in Prolific
+            window.location.href = 'https://i.gifer.com/22CX.gif'
+            });
+        },
+      })
+    } // end of init_experiment function
+    // (set up variables + initiate experiment)
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    // JATOS STUFF (get participant code and run init_experiment accordingly)
+    // ! init_experiment is defined above but runs after these lines !!!!
+
+    // Extract url var (here prolific_id)
+    var prolific_id = jatos.urlQueryParameters.prolific_id
+    // if (prolific_id) {
+
+      // IF existing ID
+      if (jatos.batchSession.find('/' + prolific_id)) {
+        init_experiment();
+
+        // IF new ID
+      } else {
+
+        // count existing participants
+        var batchSession = jatos.batchSession.getAll();
+        var pt_index = Object.keys(batchSession).length;
+
+        // add new ID to session data
+        var promise = jatos.batchSession.add('/' + prolific_id, pt_index);
+        // if added, start experiment
+        promise.done(() => {
+          init_experiment();
+        });
+      }
+    // } else {
+    //   alert('No prolific ID found! please contact us!')
+    //   jatos.abortStudy();
+    // }
+
+  });
+</script>
+
+</html>

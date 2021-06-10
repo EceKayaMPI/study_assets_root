@@ -1,0 +1,5 @@
+"rt","stimulus","button_pressed","trial_type","trial_index","time_elapsed","internal_node_id","response"
+"1354.0749999810942","<p style=""font-size:30px;"">WELCOME!</p><br>","0","html-button-response","0","1356","0.0-0.0",""
+"1136.850000009872","stimfiles/S_0.200_L_0.220_R_0.200.wav","","audio-keyboard-response","1","6215","0.0-1.0-0.0","a"
+"1371.5749999973923","stimfiles/S_0.500_L_0.550_R_0.500.wav","","audio-keyboard-response","2","15965","0.0-1.0-0.1","d"
+"3817.3550000065006","stimfiles/S_0.350_L_0.385_R_0.350.wav","","audio-keyboard-response","3","25834","0.0-1.0-0.2","a"

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> Beat Continuation Experiment </title>
+  <script src="jatos.js"></script>
+  <script src="OFJS_PID_3s.js"></script>
+  <!-- <script src="OFJS_audiofiles.js"></script> -->
+  <script src="jspsych-6.1.0/jspsych.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-responseSSS.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response-TAP.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response-ITI.js"></script>
+  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+</head>
+<body></body>
+<script>
+
+var audio_files = [
+'of_stims/OF_800ms.mp3',
+'of_stims/OF_500ms.mp3',
+'of_stims/OF_250ms.mp3',
+'of_stims/OF_300ms.mp3',
+];
+
+  // FUNCTIONS ========================================================
+  var volaudio = new Audio("setVol_ex.wav");
+
+  function calc_ioi_med(arr) {
+    var diff = new Array(arr.length - 1);
+    for (var i = 0; i < arr.length - 1; i++) {
+      diff[i] = arr[i + 1] - arr[i];
+    }
+
+    var sum = diff.reduce((sum, val) => (sum += val));
+    var len = diff.length;
+    var arrSort = diff.sort();
+    var mid = Math.ceil(diff.length / 2);
+    var median = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
+
+    return Math.round(median / 1000);
+  }
+  function playVol(audio) {
+    audio.play();
+  };
+
+  // JATOS STUFF HERE ========================================================
+  jatos.onLoad(function() {
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    function init_experiment() {
+
+      // VARIABLES ========================================================
+      var timeVar = [];
+
+      var prolific_id = jatos.urlQueryParameters.prolific_id;
+      var pt_index = jatos.batchSession.get(prolific_id);
+
+      var current_participant = info_OFJS_PID[0];
+      var timeline_pt1 = current_participant.timevars_part1;
+      var curr_prac = current_participant.prac_IOI;
+      console.log(timeline_pt1)
+
+      var nogoodgottago = 0;
+
+      var thxbye = {
+        type: 'html-button-response',
+        stimulus:
+          '<p>You have completed the trial examples.</p>',
+        choices: ['Close']
+      };
+
+      // PRACTICE ---------------------------------------
+      var feedback_text = [];
+      var practice_procedure = {
+        timeline: [{
+            type: 'jspsych-audio-keyboard-response-TAP',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: [37, 39],
+            prompt: "<p> + </p>",
+            response_ends_trial: false,
+            trial_ends_after_audio: true,
+            on_finish: function(data) {
+              var curr_stim_ioi = parseInt(data.stimulus.substr(12, 3));
+              if (data.tap_times === undefined || data.tap_times.length == 0) {
+                // array empty or does not exist
+                feedback_text.push('No taps detected!<br><br>');
+                nogoodgottago++;
+              } else { // if there are taps,
+                if (data.tap_times.length < 9) { // check how many, if less than 9:
+                  feedback_text.push('Not enough number of taps detected!<br>Please start tapping as soon as you hear the sound and keep going until the screen changes color.<br><br>');
+                }
+                else { // if number of taps is fine,
+                  var tap_ioi = calc_ioi_med(data.tap_times); // calculate their ioi
+
+                  if (tap_ioi > curr_stim_ioi * 1.2) {
+                    feedback_text.push('You were too slow!<br><br>');
+                  } else if (tap_ioi < curr_stim_ioi * 0.8) {
+                    feedback_text.push('You were too fast!<br><br>');
+                  } else {
+                    feedback_text.push('Good!<br><br>');
+                  }
+                }
+              }// if else calculations
+            } // on_finish: function
+          }, // trial timeline
+
+          { // intertrial intv
+            type: 'html-keyboard-response-ITI',
+            stimulus: '+',
+            trial_duration: 600,
+            choices: jsPsych.NO_KEYS
+          },
+
+          { // intertrial intv
+            type: 'html-button-response',
+            on_start: function(trial) {
+              trial.stimulus = feedback_text;
+              feedback_text = [];
+            },
+            stimulus: '+',
+            choices: ['OK']
+          }
+        ],
+
+        timeline_variables: curr_prac,
+        randomize_order: false,
+        on_finish: function() {
+          if (nogoodgottago > 2) {
+            alert('Faulty participation detected. Expertiment will now terminate.')
+            jatos.abortStudy();
+          }
+        }
+      } // practice_procedure end
+
+      // TRIALS ---------------------------------------
+      var trialstart = {
+        type: 'html-button-response',
+        stimulus:
+          '<p>Please click the button below to proceed to the experimental section</p>',
+        choices: ['Start section'],
+        on_start: function() {
+          nogoodgottago = 0;
+        },
+      };
+      var trial_iti_part1 = {
+        timeline: [{
+            type: 'jspsych-audio-keyboard-response-TAP',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: [37, 39],
+            prompt: "<p> + </p>",
+            response_ends_trial: false,
+            trial_ends_after_audio: true,
+            on_start: function(data) {
+              if (nogoodgottago > 4) {
+                alert('Faulty participation detected. Expertiment will now terminate.')
+                jatos.abortStudy();
+              };
+            },
+            on_finish: function(data) {
+              if (data.tap_times === undefined || data.tap_times.length == 0) {
+                nogoodgottago++;
+              }
+            }
+          },
+          { // intertrial intv
+            type: 'html-keyboard-response-ITI',
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          },
+        ],
+        timeline_variables: timeline_pt1,
+        randomize_order: false,
+      }
+
+      // PROCEDURE ========================================================
+      // timeVar.push(helloo);
+      // timeVar.push(SMT_procedure);
+      // timeVar.push(instrucPages);
+      // timeVar.push(practice_procedure);
+      timeVar.push(trialstart);
+      timeVar.push(trial_iti_part1);
+      // timeVar.push(break_trial);
+      // timeVar.push(trial_iti_part2);
+      // timeVar.push(SMT_repeat);
+      timeVar.push(thxbye);
+
+      // EXPERIMENT INIT ========================================================
+      jsPsych.init({
+        timeline: timeVar, //use timeVar as timeline
+        use_webaudio: false,
+        preload_audio: audio_files,
+        on_close: function(event) {
+
+          var filename_base = 'OFJS_test_participant_';
+          filename = filename_base.concat(pt_index.toString(), '_closed.csv');
+          var resultCSV = jsPsych.data.get().csv();
+          jatos.uploadResultFile(resultCSV, filename);
+
+          event.preventDefault();
+          event.returnValue = '';
+        },
+
+        on_finish: function() {
+          var filename_base = 'OFJS_test_participant_';
+
+          var resultCSV = jsPsych.data.get().csv();
+          filename = filename_base.concat(pt_index.toString(), '_fin.csv');
+          jatos.uploadResultFile(resultCSV, filename);
+
+          var interaction_data = jsPsych.data.getInteractionData();
+          interacfilename = filename_base.concat(pt_index.toString(), '_interaction.csv');
+          jatos.uploadResultFile(interaction_data, interacfilename);
+
+        },
+      });
+
+    } // end of init_experiment function
+    // (set up variables + initiate experiment)
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    // Extract url var (here prolific_id)
+    var prolific_id = jatos.urlQueryParameters.prolific_id
+    if (prolific_id) {
+
+      // IF existing ID
+      if (jatos.batchSession.find('/' + prolific_id)) {
+        init_experiment();
+
+        // IF new ID
+      } else {
+
+        // count existing participants
+        var batchSession = jatos.batchSession.getAll();
+        var pt_index = Object.keys(batchSession).length;
+
+        // add new ID to session data
+        var promise = jatos.batchSession.add('/' + prolific_id, pt_index);
+        // if added, start experiment
+        promise.done(() => {
+          init_experiment();
+        });
+      }
+    } else {
+      alert('No prolific ID found! please contact us!')
+      jatos.abortStudy();
+    }
+
+
+  }); // end of Jatos func
+</script>
+
+</html>
