@@ -50,7 +50,7 @@
       var prolific_id = jatos.urlQueryParameters.prolific_id;
       var pt_index = jatos.batchSession.get(prolific_id);
 
-      var current_participant = info_OFJS_PID[0];
+      var current_participant = info_OFJS_PID[pt_index];
       var timeline_pt1 = current_participant.timevars_part1;
       var timeline_pt2 = current_participant.timevars_part2;
       var curr_prac = current_participant.prac_IOI;
