@@ -15,6 +15,7 @@
   <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-image-button-response.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
   <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
   </link>
 </head>
@@ -58,9 +59,116 @@ function playVol(audio) {
       // console.log(participant_info)
 
 
-      // // SMT trials --------------------------------------- << 30 taps
-      // get them from some exp
 
+
+      // var timeVar = [];
+      //
+      // var id_check = {
+      //   type: 'html-button-response',
+      //   choices: ['Continue', 'Abort'],
+      //   stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click &#39abort&#39 and contact us in Prolific.</p>',
+      //   on_finish: function(data) {
+      //     if (data.button_pressed == 1) {
+      //       jatos.abortStudy();
+      //       }
+      //     },
+      //   };
+      //
+      //   timeVar.push(id_check)
+      //   timeVar.push({
+      //       type: 'fullscreen',
+      //       fullscreen_mode: true
+      //     });
+      //
+      //     ///&#39
+      //
+      //
+      //     var headphonequery = {
+      //       type: 'survey-text',
+      //       questions: [
+      //         {prompt: "What is the brand and model of the headphones you are using for this experiment?", name: 'HeadphoneINFO'},
+      //       ],
+      //     };
+      //     timeVar.push(headphonequery)
+      //
+      // // general instructions etc -------------------------------- << pages
+      // var welcomePage = {
+      //   type: 'html-button-response',
+      //   stimulus: '<p style="font-size:30px;">WELCOME!</p><br>' +
+      //     '<p>In this experiment, you will be asked to perform two kinds of tasks.</p>' +
+      //     '<p>First, you will be asked to tap on the keyboard witout listening to any sound. This will be repeated later as well.</p>' +
+      //     '<p>Then, you will participate in a task where you will hear sounds and press keys accordingly.</p>' +
+      //     '<p>The whole session is expected to take approximately 80 minutes. Break options will be given three times throughout the experiment.<br><br><br></p>',
+      //   choices: ['Continue']
+      // }
+
+      // // SMT trials --------------------------------------- << 30 taps
+      // var tapSMTinstruc = {
+      //   type: 'html-button-response',
+      //   stimulus: '<pstyle="font-size:20px;">TAPPING</p><br>' +
+      //     '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
+      //
+      //     '<div style="display:table-cell; vertical-align:middle; text-align:center">'+
+      //     '<img src="key_t.png">'+
+      //     '</div>'+
+      //
+      //     '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+      //     '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+      //     '<p>Click &#39continue&#39 when you are ready. </p>',
+      //   choices: ['Continue']
+      // };
+      // var tapSMTcomfy = {
+      //   type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
+      //   stimulus: 'stimfiles/silence.wav',
+      //   choices: 't',
+      //   prompt: "<p>Please tap on the T key regularly, at a rate that is the most comfortable for you to maintain.</p>",
+      //   response_ends_trial: true,
+      //   //trial_duration: 10000,
+      //   post_trial_gap: 500,
+      // };
+      // var tapSMTfast = {
+      //   type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
+      //   stimulus: 'stimfiles/silence.wav',
+      //   choices: 't',
+      //   prompt: "<p>Please tap on the T key regularly, at the FASTEST rate that is comfortable for you to maintain.</p>",
+      //   response_ends_trial: true,
+      //   //trial_duration: 10000,
+      //   post_trial_gap: 500,
+      // };
+      // var tapSMTslow = {
+      //   type: 'audio-keyboard-responseSSS', // plugin has been modified to record multiple keypresses
+      //   stimulus: 'stimfiles/silence.wav',
+      //   choices: 't',
+      //   prompt: "<p>Please tap on the T key regularly, at the SLOWEST rate that is comfortable for you to maintain.</p>",
+      //   response_ends_trial: true,
+      //   //trial_duration: 10000,
+      //   post_trial_gap: 500,
+      // };
+      // var SMT_stop = {
+      //   type: 'html-button-response',
+      //   stimulus: '<p>You can stop tapping.</p>',
+      //   choices: ['Continue']
+      // }
+      // var SMT_procedure = {
+      //   timeline: [tapSMTinstruc, tapSMTcomfy, SMT_stop, tapSMTslow, SMT_stop, tapSMTfast, SMT_stop],
+      //   repetitions: 1,
+      //   randomize_order: false,
+      // }
+      //
+      // var tapSMTrepeat = {
+      //   type: 'html-button-response',
+      //   stimulus: '<pstyle="font-size:20px;">TAPPING</p><br>' +
+      //     '<p>Now, you will be asked to repeat the tapping task you completed before. </p>' +
+      //     '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+      //     '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+      //     '<p>Click &#39continue&#39 when you are ready. </p>',
+      //   choices: ['Continue']
+      // };
+      // var SMT_repeat = {
+      //   timeline: [tapSMTrepeat, tapSMTcomfy, SMT_stop, tapSMTslow, SMT_stop, tapSMTfast, SMT_stop],
+      //   repetitions: 1,
+      //   randomize_order: false,
+      // }
 
       // instructions etc ---------------------------------------
 
