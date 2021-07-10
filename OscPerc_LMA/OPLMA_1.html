@@ -4,18 +4,18 @@
   <title> OPLMA </title>
   <script src="jatos.js"></script>
   <script src="OPLMA_PID.js"></script>
-  <script src="jspsych-6.1.0/jspsych.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-fullscreen.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-audio-button-response.js"></script>
+  <script src="jspsych-6.3.1/jspsych.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-fullscreen.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-survey-text.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-audio-keyboard-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-audio-button-response.js"></script>
   <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response-ITI.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
-    <script src="jspsych-6.1.0/plugins/jspsych-image-button-response.js"></script>
-  <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
-  <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  <script src="jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-image-keyboard-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-image-button-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
+  <link href="jspsych-6.3.1/css/jspsych.css" rel="stylesheet" type="text/css">
   </link>
 </head>
 <body></body>
@@ -160,24 +160,21 @@ function playVol(audio) {
                 curr_stim_dir = 1;
               };
 
-              console.log(data.stimulus);
-              console.log(curr_stim_dir);
-
-              if (data.key_press === 76 && curr_stim_dir < 0) {
+              if (data.response === "l" && curr_stim_dir < 0) {
                 // 'L' key & neg deviation = incorrect resp
                 feedback_text.push('The latter interval was shorter than the previous intervals. <br>Your response was incorrect. <br><br>');
                 nogoodgottago++;
               };
-              if (data.key_press === 76 && curr_stim_dir > 0) {
+              if (data.response === "l" && curr_stim_dir > 0) {
                 // 'L' key & pos deviation = incorrect resp
                 feedback_text.push('<br>Your response was correct. <br><br>');
               };
-              if (data.key_press === 83 && curr_stim_dir > 0) {
+              if (data.response === "s" && curr_stim_dir > 0) {
                 // 'S' key & pos deviation = incorrect resp
                 feedback_text.push('The latter interval was longer than the previous intervals. <br>Your response was incorrect. <br><br>');
                 nogoodgottago++;
               };
-              if (data.key_press === 83 && curr_stim_dir < 0) {
+              if (data.response === "s" && curr_stim_dir < 0) {
                 // 'S' key & neg deviation = incorrect resp
                 feedback_text.push('<br>Your response was correct. <br><br>');
               };
