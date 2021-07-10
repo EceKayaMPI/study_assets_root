@@ -50,7 +50,18 @@ function playVol(audio) {
 
       var current_participant = oplma_PID[pt_index];
       var timeline_pt1 = current_participant.timevars_1;
-      var curr_prac = current_participant.pracs;
+      var timeline_pt2 = current_participant.timevars_2;
+      var timeline_pt3 = current_participant.timevars_3;
+      var timeline_pt4 = current_participant.timevars_4;
+      var timeline_pt5 = current_participant.timevars_5;
+      var timeline_pt6 = current_participant.timevars_6;
+      var timeline_pt7 = current_participant.timevars_7;
+      var timeline_pt8 = current_participant.timevars_8;
+
+      var curr_prac_1 = current_participant.pracs_1;
+      var curr_prac_2 = current_participant.pracs_2;
+
+      var curr_examps = current_participant.examples;
 
       var participant_info = [];
       participant_info.pro_ID = prolific_id;
@@ -68,7 +79,6 @@ function playVol(audio) {
         stimulus: '<p>You have completed this section. Click &#39continue&#39 to proceed. </p>',
         choices: ['Continue']
       };
-
       var youfailed = {
         type: 'html-button-response',
         post_trial_gap: 500,
@@ -81,7 +91,6 @@ function playVol(audio) {
           }
         },
       };
-
       var break_trial = {
         type: 'html-button-response',
         stimulus: '<p style="font-size:30px;">Break!</p>' +
@@ -100,8 +109,7 @@ function playVol(audio) {
       };
 
 
-      // instructions etc ---------------------------------------------------------------------------------------------------
-
+      // instruction & example trials ----------------------------------------------------------------------------------------------------
       var instrucPages = {
         type: 'instructions', // modified >> pauses volauio, ...
         pages: [
@@ -135,7 +143,6 @@ function playVol(audio) {
         show_clickable_nav: true
       };
 
-      // example trials ----------------------------------------------------------------------------------------------------
       var ex_stim_dir = [];
       var example_trials = {
         timeline: [
@@ -163,16 +170,18 @@ function playVol(audio) {
               on_start: function(trial) {
                 if (ex_stim_dir < 0 ) { //stim shorter
                   trial.stimulus = 'key_S.png';
+                  trial.prompt = '<br>The latter interval was shorter than the previous ones.'
                   trial.choices = ['s'];
                 };
                 if (ex_stim_dir > 0 ) { //stim shorter
                   trial.stimulus = 'key_L.png'
+                  trial.prompt = '<br>The latter interval was longer than the previous ones.'
                   trial.choices = ['l'];
                 };
                 ex_stim_dir = [];
               },
             }],
-            timeline_variables: curr_prac,
+            timeline_variables: curr_examps,
             randomize_order: false,
           }
 
@@ -239,7 +248,7 @@ function playVol(audio) {
 
             ], //.. timeline }
 
-            timeline_variables: curr_prac,
+            timeline_variables: curr_prac_2,
             randomize_order: false,
             on_finish: function() {
               if (prac_2_correct < 4) {
@@ -249,6 +258,16 @@ function playVol(audio) {
       } // practice_procedure 2 end
 
       // Practice trials #1 --------------------------------------------------------------------------------------------------------------
+      var practice_start = {
+        type: 'html-button-response',
+        post_trial_gap: 500,
+        stimulus: '<p style="font-size:30px;">PRACTICE</p>' +
+          '<p>You have completed the instructions. In the following section, you will practice the task for at least 6 trials. </p>' +
+          '<p>At the end of each trial, you will be given feedback regarding your responses.</p>' +
+          '<p>When you are ready, please click the button below to proceed to the practice section</p>',
+        choices: ['Start section'],
+      };
+
       var feedback_text = [];
       var prac_1_correct = 0;
       var practice_procedure = {
@@ -315,7 +334,7 @@ function playVol(audio) {
 
         ], //.. timeline }
 
-        timeline_variables: curr_prac,
+        timeline_variables: curr_prac_1,
         randomize_order: false,
         on_finish: function() {
           if (prac_1_correct < 4) {
@@ -324,8 +343,7 @@ function playVol(audio) {
         }
       } // practice_procedure 1 end
 
-
-      // Test TRIALS ---------------------------------------------------------------
+      // Test TRIALS -----------------------------------------------------------------------------------------------------------------------------------
       var trialstart = {
         type: 'html-button-response',
         post_trial_gap: 500,
@@ -371,27 +389,238 @@ function playVol(audio) {
         randomize_order: false,
       } // trials_1 end
 
+      var trials_2 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt2,
+        randomize_order: false,
+      } // trials_1 end
 
+      var trials_3 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt3,
+        randomize_order: false,
+      } // trials_1 end
 
+      var trials_4 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt4,
+        randomize_order: false,
+      } // trials_1 end
 
+      var trials_5 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt5,
+        randomize_order: false,
+      } // trials_1 end
 
+      var trials_6 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt6,
+        randomize_order: false,
+      } // trials_6 end
 
+      var trials_7 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt7,
+        randomize_order: false,
+      } // trials_7 end
+
+      var trials_8 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt8,
+        randomize_order: false,
+      } // trials_8 end
 
       // PROCEDURE =============================================================
 
-      // timeVar.push(welcomePage);
-      // timeVar.push(instrucPages);
-
-      timeVar.push(sectDone);
-      // timeVar.push(practice_procedure);
-
-      timeVar.push(trials_1);
-      // timeVar.push(break_trial);
-      // timeVar.push(test_trials_2);
-      // timeVar.push(break_trial);
-      // timeVar.push(test_trials_3);
-      // timeVar.push(sectDone);
       //
+      timeVar.push(instrucPages);
+      timeVar.push(example_trials);
+
+      timeVar.push(practice_start);
+      timeVar.push(practice_procedure);
+
+      timeVar.push(trialstart);
+      timeVar.push(trials_1);
+      timeVar.push(break_trial);
+      timeVar.push(trials_2);
+      timeVar.push(break_trial);
+
       // timeVar.push(SMT_repeat);
       // timeVar.push(thxbye);
       timeVar.push(sectDone);
