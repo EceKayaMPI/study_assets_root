@@ -23,30 +23,31 @@
 
 var volaudio = new Audio("setVol_ex.wav");
 
-
 function playVol(audio) {
   audio.play();
 };
 
+
+
+
   jatos.onLoad(function() {
 
-    var prolific_id = jatos.urlQueryParameters.prolific_id;
-    var pt_index = jatos.batchSession.get(prolific_id);
-    var curr_audio_files = oplma_PID[pt_index].audio_files;
 
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     function init_experiment() {
+
+      var prolific_id = jatos.urlQueryParameters.prolific_id;
+      var pt_index = jatos.batchSession.get(prolific_id);
+      var curr_audio_files = oplma_PID[pt_index].audio_files;
+      // console.log(curr_audio_files);
 
       // VARIABLES ==================================================================
       // infovar @ AMJS_INFO_ALL.js
       // audio_files @ AMJS_audiofiles.js
       var timeVar = [];
       var rt_control = 0;
-      var maxRTallowed = 5000; // 5 seconds
-
-      var prolific_id = jatos.urlQueryParameters.prolific_id;
-      var pt_index = jatos.batchSession.get(prolific_id);
+      var maxRTallowed = 10000; // 10 seconds
 
       var current_participant = oplma_PID[pt_index];
       var timeline_pt1 = current_participant.timevars_1;
@@ -74,9 +75,33 @@ function playVol(audio) {
 
 
       // Other trials -------------------------------------------------------------------------------------------------------
+      var helloo = {
+        type: 'html-button-response',
+        stimulus: '<pstyle="font-size:20px;">WELCOME</p><br>' +
+          '<p>In this experiment, you will hear sounds and respond on the keyboard accordingly.</p>' +
+          '<p>Please make sure that you have a pair of headphones plugged to your computer.</p>'+
+          '<p>It is also important that you do not have any distractions around you, or any media running on your computer.</p>',
+        choices: ['Continue'],
+      };
+      var id_check = {
+        type: 'html-button-response',
+        choices: ['Continue', 'Abort'],
+        stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click "abort" and contact us in Prolific.</p>',
+        on_finish: function(data) {
+          if (data.button_pressed == 1) {
+            jatos.abortStudy();
+            }
+          },
+        };
+      var headphonequery = {
+            type: 'survey-text',
+            questions: [
+              {prompt: "What is the brand and model of the headphones you are using for this experiment?", name: 'HeadphoneINFO'},
+            ],
+          };
       var sectDone = {
         type: 'html-button-response',
-        stimulus: '<p>You have completed this section. Click &#39continue&#39 to proceed. </p>',
+        stimulus: '<p>You have completed this section. Click "continue" to proceed. </p>',
         choices: ['Continue']
       };
       var youfailed = {
@@ -94,7 +119,7 @@ function playVol(audio) {
       var break_trial = {
         type: 'html-button-response',
         stimulus: '<p style="font-size:30px;">Break!</p>' +
-          '<p><br>Click &#39continue&#39 to proceed.</p>',
+          '<p><br>Click "continue" to proceed.</p>',
         choices: ['Continue'],
         on_start: function() {
           rt_control = 0;
@@ -104,40 +129,42 @@ function playVol(audio) {
         type: 'html-button-response',
         stimulus: '<p style="font-size:30px;">Thank you!</p>' +
           '<p>You have completed the experiment.</p>' +
-          '<p>Click &#39continue&#39 to close the experiment and proceed to Prolific.</p>',
+          '<p>Click "continue" to close the experiment and proceed to Prolific.</p>',
         choices: ['Continue']
       };
 
-
       // instruction & example trials ----------------------------------------------------------------------------------------------------
+      // instrctions plugin modified >> stops volaudio
       var instrucPages = {
         type: 'instructions', // modified >> pauses volauio, ...
         pages: [
           // ___________________ volume check >> via noise ___________________
           '<p style="font-size:30px;">SOUND LEVEL<br></p>' +
-          '<p>Now, please turn down your volume and then click the button below.<br></p>' +
+          '<p>Now, please wear your headphones, turn down the volume and then click the button below.<br></p>' +
           '<button onclick="playVol(volaudio)"> play sound </button>' +
           '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
-          '<p style="color:#FF0000";>Please keep in mind that you should not change the sound volume throughout the experiment !</p>' +
+          '<p style="color:#FF0000";>Please keep in mind that you should not change the sound volume after the practice section!</p>' +
           '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
           '<p>Once it is set, click "next".<br><br></p>',
 
           // ___________________ instructions ___________________
           '<p style="font-size:30px;">INSTRUCTIONS<br></p>' +
-          '<p>In the following sections, you will hear sounds and respond on the keybord accordingly.</p>' +
+          '<p>In the current section, you will be instructed about the task. Then, you will hear some examples.' +
+          ' Finally, before the main experiment section, you will practice the task.</p>' +
           '<p>Please read the instructions carefully. You can travel between pages freely until you understand the task.</p>',
 
           // ___________________ task ___________________
           '<p style="font-size:30px;">THE TASK<br></p>' +
           '<p>In each trial, you will first hear a rhythm consisting of 5 drum sounds, followed by a short pause. Then, you will hear another interval with 2 drum sounds.</p>' +
           '<p>Your task is to decide whether this final interval is longer or shorter than the intervals making up the rhythm.</p>' +
-          '<p><br>If the final interval is longer, press L key. If it is shorter, press S key.</p>' +
-          '<p><br>You should press the key as fast as possible! Note that timing of the key presses will be checked and you may get banned if you wait long to press!</p>',
+          '<p><br>If the final interval is LONGER, press L key.<br>If it is SHORTER, press S key.</p>' +
+          '<p><br>You should press the key as fast as possible! Note that timing of the key presses will be checked and you may get banned if you wait too long to respond!</p>',
+
           // ___________________ picture ___________________
-          '<p>Here is a graphical representation of one trial: You will first hear the drum sounds, then respond on the keyboard as fast as possible. The end of the trial will be signaled by a screen color change. </p>' +
           '<div style="width: 100%; height: 100%; display: flex; justify-content: center; padding: 10px 10px 20px 10px;">' +
           '<img src="oplma_taskpic.png" style="width: 100%; height: 100%; text-align: center; border-style: dotted;" ></img>' +
           '</div>'+
+          '<p>Here is a graphical representation of one trial: You will first hear the drum sounds, then respond on the keyboard as fast as possible. The end of the trial will be signaled by a screen color change. </p>' +
           '<p><br>If you understood the task, please click "next" to proceed to the examples section. You can not go back to the current section once you proceed.</p>'
         ],
         show_clickable_nav: true
@@ -160,7 +187,7 @@ function playVol(audio) {
               } else {
                 ex_stim_dir = 1;
               }
-              console.log(ex_stim_dir);
+              // console.log(ex_stim_dir);
             },
           },
             { // show key resp
@@ -170,12 +197,12 @@ function playVol(audio) {
               on_start: function(trial) {
                 if (ex_stim_dir < 0 ) { //stim shorter
                   trial.stimulus = 'key_S.png';
-                  trial.prompt = '<br>The latter interval was shorter than the previous ones.'
+                  trial.prompt = '<br>Press S key when the final interval is SHORTER than the ones making up the rhythm.'
                   trial.choices = ['s'];
                 };
                 if (ex_stim_dir > 0 ) { //stim shorter
                   trial.stimulus = 'key_L.png'
-                  trial.prompt = '<br>The latter interval was longer than the previous ones.'
+                  trial.prompt = '<br>Press L key when the final interval is LONGER than the ones making up the rhythm.'
                   trial.choices = ['l'];
                 };
                 ex_stim_dir = [];
@@ -351,13 +378,13 @@ function playVol(audio) {
           '<p>You have completed the practice section. In the following section, the pacing will be automated, and no feedback will be given. </p>' +
           '<p>Also, the task will be harder than the practice section. If you can not decide about the duration of the final interval, select the option which feels like the correct answer. </p>' +
           '<p>This whole section is expected to take 70 minutes in total. It will be divided into 8 parts, each of which should take no more than 9 minutes. It is important that you keep concentrated between the breaks.</p>' +
+          '<p style="color:#FF0000";>Please keep in mind that you should not change the sound volume after this point, until the end of the experiment!</p>' +
           '<p>When you are ready, please click the button below to proceed to the experimental section</p>',
         choices: ['Start section'],
         on_start: function() {
           rt_control = 0;
         },
       };
-
       var trials_1 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -388,7 +415,6 @@ function playVol(audio) {
         timeline_variables: timeline_pt1,
         randomize_order: false,
       } // trials_1 end
-
       var trials_2 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -419,7 +445,6 @@ function playVol(audio) {
         timeline_variables: timeline_pt2,
         randomize_order: false,
       } // trials_1 end
-
       var trials_3 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -450,7 +475,6 @@ function playVol(audio) {
         timeline_variables: timeline_pt3,
         randomize_order: false,
       } // trials_1 end
-
       var trials_4 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -481,7 +505,6 @@ function playVol(audio) {
         timeline_variables: timeline_pt4,
         randomize_order: false,
       } // trials_1 end
-
       var trials_5 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -512,7 +535,6 @@ function playVol(audio) {
         timeline_variables: timeline_pt5,
         randomize_order: false,
       } // trials_1 end
-
       var trials_6 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -543,7 +565,6 @@ function playVol(audio) {
         timeline_variables: timeline_pt6,
         randomize_order: false,
       } // trials_6 end
-
       var trials_7 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -574,7 +595,6 @@ function playVol(audio) {
         timeline_variables: timeline_pt7,
         randomize_order: false,
       } // trials_7 end
-
       var trials_8 = {
         timeline: [{
             type: 'audio-keyboard-response',
@@ -608,7 +628,14 @@ function playVol(audio) {
 
       // PROCEDURE =============================================================
 
-      //
+      timeVar.push(id_check)
+      timeVar.push({
+          type: 'fullscreen',
+          fullscreen_mode: true
+        });
+      timeVar.push(helloo);
+      timeVar.push(headphonequery)
+
       timeVar.push(instrucPages);
       timeVar.push(example_trials);
 
@@ -620,11 +647,18 @@ function playVol(audio) {
       timeVar.push(break_trial);
       timeVar.push(trials_2);
       timeVar.push(break_trial);
-
-      // timeVar.push(SMT_repeat);
-      // timeVar.push(thxbye);
-      timeVar.push(sectDone);
-      // console.log(timeVar);
+      timeVar.push(trials_3);
+      timeVar.push(break_trial);
+      timeVar.push(trials_4);
+      timeVar.push(break_trial);
+      timeVar.push(trials_5);
+      timeVar.push(break_trial);
+      timeVar.push(trials_6);
+      timeVar.push(break_trial);
+      timeVar.push(trials_7);
+      timeVar.push(break_trial);
+      timeVar.push(trials_8);
+      timeVar.push(thxbye);
 
       // EXPERIMENT INIT =======================================================
       jsPsych.init({
@@ -632,20 +666,28 @@ function playVol(audio) {
         default_iti: 550,
         use_webaudio: false,
         preload_audio: curr_audio_files,
-        on_close: function() {
-          var resultCSV = jsPsych.data.get().csv();
-          var closed_data = jatos.uploadResultFile(resultCSV, 'op_closed.csv');
-        },
-          on_finish: function() {
-            var interaction_data = jsPsych.data.getInteractionData();
-            jatos.uploadResultFile(interaction_data, 'interac.csv');
-            var resultCSV = jsPsych.data.get().csv();
-            var full_data = jatos.uploadResultFile(resultCSV, 'opdata.csv');
+        on_close: function(event) {
 
-            jatos.endStudyAjax().then(() => {
-            // Change this URL to the one you see in Prolific
-            window.location.href = 'https://app.prolific.co/submissions/complete?cc=7A0BF2E1'
-            });
+          var filename_base = 'OPLMA_pt_';
+          filename = filename_base.concat(pt_index.toString(), '_closed.csv');
+          var resultCSV = jsPsych.data.get().csv();
+          jatos.uploadResultFile(resultCSV, filename);
+
+          event.preventDefault();
+          event.returnValue = '';
+        },
+
+        on_finish: function() {
+          var filename_base = 'OPLMA_pt_';
+
+          var resultCSV = jsPsych.data.get().csv();
+          filename = filename_base.concat(pt_index.toString(), '_fin.csv');
+          jatos.uploadResultFile(resultCSV, filename);
+
+          var interaction_data = jsPsych.data.getInteractionData();
+          interacfilename = filename_base.concat(pt_index.toString(), '_interac.csv');
+          jatos.uploadResultFile(interaction_data, interacfilename);
+
         },
       })
     } // end of init_experiment function

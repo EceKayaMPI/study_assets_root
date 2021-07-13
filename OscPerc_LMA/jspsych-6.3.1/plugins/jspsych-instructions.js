@@ -68,7 +68,7 @@ jsPsych.plugins.instructions = (function() {
         pretty_name: 'Page label',
         default: 'Page',
         description: 'The text that appears before x/y (current/total) pages displayed with show_page_number'
-      },      
+      },
       button_label_previous: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Button label previous',
@@ -112,7 +112,7 @@ jsPsych.plugins.instructions = (function() {
           pagenum_display = "<span style='margin: 0 1em;' class='"+
           "jspsych-instructions-pagenum'>"+ trial.page_label + ' ' +(current_page+1)+"/"+trial.pages.length+"</span>";
       }
-     
+
       if (trial.show_clickable_nav) {
 
         var nav_html = "<div class='jspsych-instructions-nav' style='padding: 10px 0px;'>";
@@ -138,13 +138,17 @@ jsPsych.plugins.instructions = (function() {
         if (trial.show_page_number && trial.pages.length > 1) {
           // page numbers for non-mouse navigation
           html += "<div class='jspsych-instructions-pagenum'>"+pagenum_display+"</div>"
-        } 
+        }
         display_element.innerHTML = html;
       }
-      
+
     }
 
+
+
     function next() {
+
+volaudio.pause();
 
       add_current_page_to_view_history()
 
