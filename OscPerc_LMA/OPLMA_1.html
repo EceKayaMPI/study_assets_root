@@ -5,8 +5,12 @@
   <script src="jatos.js"></script>
   <script src="OPLMA_PID.js"></script>
   <script src="jspsych-6.3.1/jspsych.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-preload.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-fullscreen.js"></script>
-  <script src="jspsych-6.3.1/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-tap-keyboard-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
+  <!-- <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-responseSSS.js"></script> -->
+  <script src="jspsych-6.3.1/plugins/jspsych-survey-html-form.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-audio-keyboard-response.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-audio-button-response.js"></script>
@@ -15,7 +19,7 @@
   <script src="jspsych-6.3.1/plugins/jspsych-image-keyboard-response.js"></script>
     <script src="jspsych-6.3.1/plugins/jspsych-image-button-response.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
-  <link href="jspsych-6.3.1/css/jspsych.css" rel="stylesheet" type="text/css">
+  <link href="jspsych-6.3.1/css/jspsych_mod.css" rel="stylesheet" type="text/css">
   </link>
 </head>
 <body></body>
@@ -27,12 +31,7 @@ function playVol(audio) {
   audio.play();
 };
 
-
-
-
   jatos.onLoad(function() {
-
-
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     function init_experiment() {
@@ -41,6 +40,11 @@ function playVol(audio) {
       var pt_index = jatos.batchSession.get(prolific_id);
       var curr_audio_files = oplma_PID[pt_index].audio_files;
       // console.log(curr_audio_files);
+
+      var preload = {
+        type: 'preload',
+        audio: curr_audio_files,
+      };
 
       // VARIABLES ==================================================================
       // infovar @ AMJS_INFO_ALL.js
@@ -67,18 +71,85 @@ function playVol(audio) {
       var participant_info = [];
       participant_info.pro_ID = prolific_id;
       participant_info.pt_index = pt_index;
+      console.log(pt_index);
 
       // TRIALS ==================================================================
 
       // // SMT trials --------------------------------------- << 30 taps
       // get them from some exp
+      var tapSMTinstruc = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">TAPPING<br></p>' +
+          '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
 
+          '<div style="display:table-cell; vertical-align:middle; text-align:center">'+
+          '<img src="key_t.png">'+
+          '</div>'+
+
+          '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+          '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+          '<p>Click &#39continue&#39 when you are ready. </p>',
+        choices: ['Continue']
+      };
+      var tapSMTcomfy = {
+        type: 'tap-keyboard-response', // new plugin 6.3.1
+        stimulus: '',
+        choices: ['t'],
+        n_taps_required: 30,
+        prompt: "<p>Please tap on the T key regularly, at a rate that is the most comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        post_trial_gap: 500,
+      };
+      var tapSMTfast = {
+        type: 'tap-keyboard-response', // new plugin 6.3.1
+        stimulus: '',
+        choices: ['t'],
+        n_taps_required: 30,
+        prompt: "<p>Please tap on the T key regularly, at the FASTEST rate that is comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        post_trial_gap: 500,
+      };
+      var tapSMTslow = {
+        type: 'tap-keyboard-response', // new plugin 6.3.1
+        stimulus: '',
+        choices: ['t'],
+        n_taps_required: 30,
+        prompt: "<p>Please tap on the T key regularly, at the SLOWEST rate that is comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        post_trial_gap: 500,
+      };
+      var SMT_stop = {
+        type: 'html-button-response',
+        stimulus: '<p>You can stop tapping.</p>',
+        choices: ['Continue']
+      }
+      var SMT_procedure = {
+        timeline: [tapSMTinstruc, tapSMTcomfy, SMT_stop, tapSMTslow, SMT_stop, tapSMTfast, SMT_stop],
+        repetitions: 1,
+        randomize_order: false,
+      }
+      var tapSMTrepeat = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">TAPPING<br></p>' +
+          '<p>Now, you will be asked to repeat the tapping task you completed before. </p>' +
+          '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+          '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+          '<p>Click &#39continue&#39 when you are ready. </p>',
+        choices: ['Continue']
+      };
+      var SMT_repeat = {
+        timeline: [tapSMTrepeat, tapSMTcomfy, SMT_stop, tapSMTslow, SMT_stop, tapSMTfast, SMT_stop],
+        repetitions: 1,
+        randomize_order: false,
+      }
 
       // Other trials -------------------------------------------------------------------------------------------------------
       var helloo = {
         type: 'html-button-response',
         stimulus: '<pstyle="font-size:20px;">WELCOME</p><br>' +
-          '<p>In this experiment, you will hear sounds and respond on the keyboard accordingly.</p>' +
+          // '<p>In this experiment, you will hear sounds and respond on the keyboard accordingly.</p>' +
+          '<p>In this experiment, you will complete two kinds of tasks. You will first tap on the keyboard without listening to any sounds.'+
+          'Then, you will hear sounds and respond on the keyboard accordingly.</p>'+
           '<p>Please make sure that you have a pair of headphones plugged to your computer.</p>'+
           '<p>It is also important that you do not have any distractions around you, or any media running on your computer.</p>',
         choices: ['Continue'],
@@ -88,17 +159,42 @@ function playVol(audio) {
         choices: ['Continue', 'Abort'],
         stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click "abort" and contact us in Prolific.</p>',
         on_finish: function(data) {
-          if (data.button_pressed == 1) {
-            jatos.abortStudy();
-            }
-          },
+          console.log(data.button_pressed)
+          // if (data.button_pressed == 1) {
+          //   jatos.abortStudy();
+          //   }
+          // },
         };
-      var headphonequery = {
-            type: 'survey-text',
-            questions: [
-              {prompt: "What is the brand and model of the headphones you are using for this experiment?", name: 'HeadphoneINFO'},
-            ],
-          };
+
+      var form_trial = {
+        type: 'survey-html-form',
+        preamble: '<p style="font-size:30px;">COMPUTER HARDWARE<br></p>',
+        html: '<p><b>What type of headphones are you using for this experiment?</b></p>'+
+        '<input type="radio" name="hp_in" id="hp_in" value="1"><label for="hp_in">in-ear</label></p>'+
+        '<input type="radio" name="hp_in" id="hp_ov" value="2"><label for="hp_ov">over-ear</label></p>'+
+
+        '<p><b>What is the brand and model of the headphones you are using for this experiment?</b></p>'+
+        '<input type="text" name="hp_brand" id="hp_brand"></p>'+
+
+        '<p><b>What kind of computer are you using?</b></p>'+
+        '<input type="radio" name="pc_dsk" id="pc_dsk" value="1"><label for="pc_dsk">Desktop</label></p>'+
+        '<input type="radio" name="pc_dsk" id="pc_lap" value="2"><label for="pc_lap">Laptop</label></p>'+
+
+        '<p><b>What Computer Operating System are you using?</b></p>'+
+        '<input type="radio" name="os_win" id="os_win" value="1"><label for="os_win">Microsoft Windows</label></p>'+
+        '<input type="radio" name="os_win" id="os_mac" value="2"><label for="os_mac">OS X by Apple Inc.</label></p>'+
+        '<input type="radio" name="os_win" id="os_lin" value="1"><label for="os_lin">Linux/GNU</label></p>'+
+        '<input type="radio" name="os_win" id="os_oth" value="2"><label for="os_oth">Other OS</label></p>'+
+
+        '<p><b>Do you use an external keyboard?</b></p>'+
+        '<input type="radio" name="kb_on" id="kb_on" value="1"><label for="kb_on">The keyboard is on the computer/laptop</label></p>'+
+        '<input type="radio" name="kb_on" id="kb_ex" value="2"><label for="kb_ex">The keyboard is connected externally to the computer</label></p>'+
+
+        '<p><b>If the keyboard is externally connected, which kind of connection does it use?</b></p>'+
+        '<input type="radio" name="kbcon_c" id="kbcon_c" value="1"><label for="kbcon_c">Cable</label></p>'+
+        '<input type="radio" name="kbcon_c" id="kbcon_bt" value="2"><label for="kbcon_bt">Bluetooth</label></p>'
+      };
+
       var sectDone = {
         type: 'html-button-response',
         stimulus: '<p>You have completed this section. Click "continue" to proceed. </p>',
@@ -158,15 +254,17 @@ function playVol(audio) {
           '<p>In each trial, you will first hear a rhythm consisting of 5 drum sounds, followed by a short pause. Then, you will hear another interval with 2 drum sounds.</p>' +
           '<p>Your task is to decide whether this final interval is longer or shorter than the intervals making up the rhythm.</p>' +
           '<p><br>If the final interval is LONGER, press L key.<br>If it is SHORTER, press S key.</p>' +
-          '<p><br>You should press the key as fast as possible! Note that timing of the key presses will be checked and you may get banned if you wait too long to respond!</p>',
+          '<p><br>You should press the key as fast as possible! Note that timing of the key presses will be checked and you may get banned if you wait too long to respond!</p>'+
+          '<p><br>Please do not count, and do not get help from any movement in your body while doing this task.</p>',
 
           // ___________________ picture ___________________
-          '<div style="width: 100%; height: 100%; display: flex; justify-content: center; padding: 10px 10px 20px 10px;">' +
+          '<div style="width: 90%; height: 90%; display: flex; justify-content: center; padding: 20px 10px 10px 10px;">' +
           '<img src="oplma_taskpic.png" style="width: 100%; height: 100%; text-align: center; border-style: dotted;" ></img>' +
           '</div>'+
           '<p>Here is a graphical representation of one trial: You will first hear the drum sounds, then respond on the keyboard as fast as possible. The end of the trial will be signaled by a screen color change. </p>' +
           '<p><br>If you understood the task, please click "next" to proceed to the examples section. You can not go back to the current section once you proceed.</p>'
         ],
+
         show_clickable_nav: true
       };
 
@@ -253,6 +351,10 @@ function playVol(audio) {
                     prac_2_correct++;
                   };
 
+                  if (data.rt > maxRTallowed) {
+                    feedback_text.push('<br>You were too late to respond. Please press the keys as fast as possible, after the sounds end. <br><br>');
+                  };
+
                 } // on_finish: function
               }, // trial timeline part 1 }
 
@@ -335,7 +437,7 @@ function playVol(audio) {
                 prac_1_correct++;
               };
 
-              if (data.rt > 5000) {
+              if (data.rt > maxRTallowed) {
                 feedback_text.push('<br>You were too late to respond. Please press the keys as fast as possible, after the sounds end. <br><br>');
               };
 
@@ -628,16 +730,20 @@ function playVol(audio) {
 
       // PROCEDURE =============================================================
 
-      timeVar.push(id_check)
+      // timeVar.push(preload)
+      // timeVar.push(id_check)
       timeVar.push({
           type: 'fullscreen',
           fullscreen_mode: true
         });
-      timeVar.push(helloo);
-      timeVar.push(headphonequery)
+      // timeVar.push(helloo);
+      //
+      // timeVar.push(SMT_procedure);
+      // timeVar.push(sectDone);
+
 
       timeVar.push(instrucPages);
-      timeVar.push(example_trials);
+      timeVar.push(form_trial);
 
       timeVar.push(practice_start);
       timeVar.push(practice_procedure);
@@ -665,7 +771,6 @@ function playVol(audio) {
         timeline: timeVar,
         default_iti: 550,
         use_webaudio: false,
-        preload_audio: curr_audio_files,
         on_close: function(event) {
 
           var filename_base = 'OPLMA_pt_';
@@ -688,6 +793,11 @@ function playVol(audio) {
           interacfilename = filename_base.concat(pt_index.toString(), '_interac.csv');
           jatos.uploadResultFile(interaction_data, interacfilename);
 
+          jatos.endStudyAjax().then(() => {
+          // Change this URL to the one you see in Prolific
+          window.location.href = 'https://app.prolific.co/submissions/complete?cc=7A0BF2E1'
+          });
+
         },
       })
     } // end of init_experiment function
@@ -699,6 +809,7 @@ function playVol(audio) {
 
     // Extract url var (here prolific_id)
     var prolific_id = jatos.urlQueryParameters.prolific_id
+
     if (prolific_id) {
 
       // IF existing ID
