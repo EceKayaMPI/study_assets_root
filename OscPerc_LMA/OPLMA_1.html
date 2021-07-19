@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title> OPLMA </title>
+  <title> RGNER - Duration discrimination study </title>
   <script src="jatos.js"></script>
   <script src="OPLMA_PID.js"></script>
   <script src="jspsych-6.3.1/jspsych.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-preload.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-fullscreen.js"></script>
-    <script src="jspsych-6.3.1/plugins/jspsych-tap-keyboard-response.js"></script>
-    <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
-  <!-- <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-responseSSS.js"></script> -->
+  <script src="jspsych-6.3.1/plugins/jspsych-tap-keyboard-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-survey-html-form.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-audio-keyboard-response.js"></script>
   <script src="jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
@@ -82,7 +81,7 @@ function playVol(audio) {
         stimulus: '<p style="font-size:30px;">TAPPING<br></p>' +
           '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
 
-          '<div style="display:table-cell; vertical-align:middle; text-align:center">'+
+          '<div style="display:inline; vertical-align:middle; text-align:center">'+
           '<img src="key_t.png">'+
           '</div>'+
 
@@ -159,16 +158,15 @@ function playVol(audio) {
         choices: ['Continue', 'Abort'],
         stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click "abort" and contact us in Prolific.</p>',
         on_finish: function(data) {
-          console.log(data.button_pressed)
-          // if (data.button_pressed == 1) {
-          //   jatos.abortStudy();
-          //   }
-          // },
+          if (data.response == 1) {
+            jatos.abortStudy();
+            }
+          },
         };
 
       var form_trial = {
         type: 'survey-html-form',
-        preamble: '<p style="font-size:30px;">COMPUTER HARDWARE<br></p>',
+        preamble: '<p style="font-size:30px">COMPUTER HARDWARE SURVEY</p>',
         html: '<p><b>What type of headphones are you using for this experiment?</b></p>'+
         '<input type="radio" name="hp_in" id="hp_in" value="1"><label for="hp_in">in-ear</label></p>'+
         '<input type="radio" name="hp_in" id="hp_ov" value="2"><label for="hp_ov">over-ear</label></p>'+
@@ -258,7 +256,7 @@ function playVol(audio) {
           '<p><br>Please do not count, and do not get help from any movement in your body while doing this task.</p>',
 
           // ___________________ picture ___________________
-          '<div style="width: 90%; height: 90%; display: flex; justify-content: center; padding: 20px 10px 10px 10px;">' +
+          '<div style="width: 90%; height: 90%; display: inline; justify-content: center; padding: 20px 10px 10px 10px;">' +
           '<img src="oplma_taskpic.png" style="width: 100%; height: 100%; text-align: center; border-style: dotted;" ></img>' +
           '</div>'+
           '<p>Here is a graphical representation of one trial: You will first hear the drum sounds, then respond on the keyboard as fast as possible. The end of the trial will be signaled by a screen color change. </p>' +
@@ -730,17 +728,16 @@ function playVol(audio) {
 
       // PROCEDURE =============================================================
 
-      // timeVar.push(preload)
-      // timeVar.push(id_check)
+      timeVar.push(preload)
+      timeVar.push(id_check)
       timeVar.push({
           type: 'fullscreen',
           fullscreen_mode: true
         });
-      // timeVar.push(helloo);
-      //
-      // timeVar.push(SMT_procedure);
-      // timeVar.push(sectDone);
+      timeVar.push(helloo);
 
+      timeVar.push(SMT_procedure);
+      timeVar.push(sectDone);
 
       timeVar.push(instrucPages);
       timeVar.push(form_trial);
@@ -764,6 +761,9 @@ function playVol(audio) {
       timeVar.push(trials_7);
       timeVar.push(break_trial);
       timeVar.push(trials_8);
+
+      timeVar.push(sectDone);
+      timeVar.push(SMT_repeat);
       timeVar.push(thxbye);
 
       // EXPERIMENT INIT =======================================================
@@ -795,7 +795,7 @@ function playVol(audio) {
 
           jatos.endStudyAjax().then(() => {
           // Change this URL to the one you see in Prolific
-          window.location.href = 'https://app.prolific.co/submissions/complete?cc=7A0BF2E1'
+          window.location.href = 'https://app.prolific.co/submissions/complete?cc=8ABFD51D'
           });
 
         },
