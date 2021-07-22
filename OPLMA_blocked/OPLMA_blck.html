@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> RGNER - Duration discrimination study </title>
+  <script src="jatos.js"></script>
+  <script src="OPLMA_PID_1B.js"></script>
+  <script src="jspsych-6.3.1/jspsych.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-preload.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-fullscreen.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-tap-keyboard-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-survey-html-form.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-audio-keyboard-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-audio-button-response.js"></script>
+  <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response-ITI.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-image-keyboard-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-image-button-response.js"></script>
+  <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
+  <link href="jspsych-6.3.1/css/jspsych_mod.css" rel="stylesheet" type="text/css">
+  </link>
+</head>
+<body></body>
+<script>
+
+var volaudio = new Audio("setVol_ex.wav");
+
+function playVol(audio) {
+  audio.play();
+};
+
+  jatos.onLoad(function() {
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    function init_experiment() {
+
+      var prolific_id = jatos.urlQueryParameters.prolific_id;
+      var pt_index = jatos.batchSession.get(prolific_id);
+      var curr_audio_files = oplma_PID[0].audio_files;
+
+
+      var preload = {
+        type: 'preload',
+        audio: curr_audio_files,
+      };
+
+      // VARIABLES ==================================================================
+      // infovar @ AMJS_INFO_ALL.js
+      // audio_files @ AMJS_audiofiles.js
+      var timeVar = [];
+      var rt_control = 0;
+      var maxRTallowed = 10000; // 10 seconds
+
+      var current_participant = oplma_PID[0];
+      var timeline_pt1 = current_participant.timevars_1;
+      var timeline_pt2 = current_participant.timevars_2;
+      var timeline_pt3 = current_participant.timevars_3;
+      var timeline_pt4 = current_participant.timevars_4;
+      var timeline_pt5 = current_participant.timevars_5;
+      var timeline_pt6 = current_participant.timevars_6;
+      var timeline_pt7 = current_participant.timevars_7;
+      var timeline_pt8 = current_participant.timevars_8;
+
+      var curr_prac_1 = current_participant.pracs_1;
+      var curr_prac_2 = current_participant.pracs_2;
+
+      var curr_examps = current_participant.examples;
+
+      var participant_info = [];
+      participant_info.pro_ID = prolific_id;
+      participant_info.pt_index = pt_index;
+      // console.log(pt_index);
+
+      // TRIALS ==================================================================
+
+      // // SMT trials --------------------------------------- << 30 taps
+      // get them from some exp
+      var tapSMTinstruc = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">TAPPING<br></p>' +
+          '<p>Your first task is to tap on the keyboard by pressing T on a regular beat. </p>' +
+
+          '<div style="display:inline; vertical-align:middle; text-align:center">'+
+          '<img src="key_t.png">'+
+          '</div>'+
+
+          '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+          '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+          '<p>Click &#39continue&#39 when you are ready. </p>',
+        choices: ['Continue']
+      };
+      var tapSMTcomfy = {
+        type: 'tap-keyboard-response', // new plugin 6.3.1
+        stimulus: '',
+        choices: ['t'],
+        n_taps_required: 30,
+        prompt: "<p>Please tap on the T key regularly, at a rate that is the most comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        post_trial_gap: 500,
+      };
+      var tapSMTfast = {
+        type: 'tap-keyboard-response', // new plugin 6.3.1
+        stimulus: '',
+        choices: ['t'],
+        n_taps_required: 30,
+        prompt: "<p>Please tap on the T key regularly, at the FASTEST rate that is comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        post_trial_gap: 500,
+      };
+      var tapSMTslow = {
+        type: 'tap-keyboard-response', // new plugin 6.3.1
+        stimulus: '',
+        choices: ['t'],
+        n_taps_required: 30,
+        prompt: "<p>Please tap on the T key regularly, at the SLOWEST rate that is comfortable for you to maintain.</p>",
+        response_ends_trial: true,
+        post_trial_gap: 500,
+      };
+      var SMT_stop = {
+        type: 'html-button-response',
+        stimulus: '<p>You can stop tapping.</p>',
+        choices: ['Continue']
+      }
+      var SMT_procedure = {
+        timeline: [tapSMTinstruc, tapSMTcomfy, SMT_stop, tapSMTslow, SMT_stop, tapSMTfast, SMT_stop],
+        repetitions: 1,
+        randomize_order: false,
+      }
+      var tapSMTrepeat = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">TAPPING<br></p>' +
+          '<p>Now, you will be asked to repeat the tapping task you completed before. </p>' +
+          '<p>You will tap first on a comfortable speed, then slowest and then on the fastest speed. </p>' +
+          '<p>Please try to tap as evenly as possible, until you see a message on the screen. </p>' +
+          '<p>Click &#39continue&#39 when you are ready. </p>',
+        choices: ['Continue']
+      };
+      var SMT_repeat = {
+        timeline: [tapSMTrepeat, tapSMTcomfy, SMT_stop, tapSMTslow, SMT_stop, tapSMTfast, SMT_stop],
+        repetitions: 1,
+        randomize_order: false,
+      }
+
+      // Other trials -------------------------------------------------------------------------------------------------------
+      var helloo = {
+        type: 'html-button-response',
+        stimulus: '<pstyle="font-size:20px;">WELCOME</p><br>' +
+          // '<p>In this experiment, you will hear sounds and respond on the keyboard accordingly.</p>' +
+          '<p>In this experiment, you will complete two kinds of tasks. You will first tap on the keyboard without listening to any sounds.'+
+          'Then, you will hear sounds and respond on the keyboard accordingly.</p>'+
+          '<p>Please make sure that you have a pair of headphones plugged to your computer.</p>'+
+          '<p>It is also important that you do not have any distractions around you, or any media running on your computer.</p>',
+        choices: ['Continue'],
+      };
+      var id_check = {
+        type: 'html-button-response',
+        choices: ['Continue', 'Abort'],
+        stimulus: '<p>Detected Prolific ID is: '+prolific_id+'</p><p>If it is incorrect, please click "abort" and contact us in Prolific.</p>',
+        on_finish: function(data) {
+          if (data.response == 1) {
+            jatos.abortStudy();
+            }
+          },
+        };
+
+      var form_trial = {
+        type: 'survey-html-form',
+        preamble: '<p style="font-size:30px">COMPUTER HARDWARE SURVEY</p>',
+        html: '<p><b>What type of headphones are you using for this experiment?</b></p>'+
+        '<input type="radio" name="hp_in" id="hp_in" value="1"><label for="hp_in">in-ear</label></p>'+
+        '<input type="radio" name="hp_in" id="hp_ov" value="2"><label for="hp_ov">over-ear</label></p>'+
+
+        '<p><b>What is the brand and model of the headphones you are using for this experiment?</b></p>'+
+        '<input type="text" name="hp_brand" id="hp_brand"></p>'+
+
+        '<p><b>What kind of computer are you using?</b></p>'+
+        '<input type="radio" name="pc_dsk" id="pc_dsk" value="1"><label for="pc_dsk">Desktop</label></p>'+
+        '<input type="radio" name="pc_dsk" id="pc_lap" value="2"><label for="pc_lap">Laptop</label></p>'+
+
+        '<p><b>What Computer Operating System are you using?</b></p>'+
+        '<input type="radio" name="os_win" id="os_win" value="1"><label for="os_win">Microsoft Windows</label></p>'+
+        '<input type="radio" name="os_win" id="os_mac" value="2"><label for="os_mac">OS X by Apple Inc.</label></p>'+
+        '<input type="radio" name="os_win" id="os_lin" value="1"><label for="os_lin">Linux/GNU</label></p>'+
+        '<input type="radio" name="os_win" id="os_oth" value="2"><label for="os_oth">Other OS</label></p>'+
+
+        '<p><b>Do you use an external keyboard?</b></p>'+
+        '<input type="radio" name="kb_on" id="kb_on" value="1"><label for="kb_on">The keyboard is on the computer/laptop</label></p>'+
+        '<input type="radio" name="kb_on" id="kb_ex" value="2"><label for="kb_ex">The keyboard is connected externally to the computer</label></p>'+
+
+        '<p><b>If the keyboard is externally connected, which kind of connection does it use?</b></p>'+
+        '<input type="radio" name="kbcon_c" id="kbcon_c" value="1"><label for="kbcon_c">Cable</label></p>'+
+        '<input type="radio" name="kbcon_c" id="kbcon_bt" value="2"><label for="kbcon_bt">Bluetooth</label></p>'
+      };
+
+      var sectDone = {
+        type: 'html-button-response',
+        stimulus: '<p>You have completed this section. Click "continue" to proceed. </p>',
+        choices: ['Continue']
+      };
+      var youfailed = {
+        type: 'html-button-response',
+        post_trial_gap: 500,
+        stimulus: '<p style="font-size:30px;">ERROR</p>' +
+          '<p>Faulty participation detected. The experiment will now terminate. Please contact us on prolific</p>',
+        choices: ['OK'],
+        on_finish: function(data) {
+          if (data.response === 0) {
+            jatos.abortStudy();
+          }
+        },
+      };
+      var break_trial = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">Break!</p>' +
+          '<p><br>Click "continue" to proceed.</p>',
+        choices: ['Continue'],
+        on_start: function() {
+          rt_control = 0;
+        },
+      }
+      var thxbye = {
+        type: 'html-button-response',
+        stimulus: '<p style="font-size:30px;">Thank you!</p>' +
+          '<p>You have completed the experiment.</p>' +
+          '<p>Click "continue" to close the experiment and proceed to Prolific.</p>',
+        choices: ['Continue']
+      };
+
+      // instruction & example trials ----------------------------------------------------------------------------------------------------
+      // instrctions plugin modified >> stops volaudio
+      var instrucPages = {
+        type: 'instructions', // modified >> pauses volauio, ...
+        pages: [
+          // ___________________ volume check >> via noise ___________________
+          '<p style="font-size:30px;">SOUND LEVEL<br></p>' +
+          '<p>Now, please wear your headphones, turn down the volume and then click the button below.<br></p>' +
+          '<button onclick="playVol(volaudio)"> play sound </button>' +
+          '<p>Please set the sound volume of your computer such that you hear this sound comfortably.</p>' +
+          '<p style="color:#FF0000";>Please keep in mind that you should not change the sound volume after the practice section!</p>' +
+          '<p>You can listen to the sound as many times as you want until you set the volume. </p>' +
+          '<p>Once it is set, click "next".<br><br></p>',
+
+          // ___________________ instructions ___________________
+          '<p style="font-size:30px;">INSTRUCTIONS<br></p>' +
+          '<p>In the current section, you will be instructed about the task. Then, you will hear some examples.' +
+          ' Finally, before the main experiment section, you will practice the task.</p>' +
+          '<p>Please read the instructions carefully. You can travel between pages freely until you understand the task.</p>',
+
+          // ___________________ task ___________________
+          '<p style="font-size:30px;">THE TASK<br></p>' +
+          '<p>In each trial, you will first hear a rhythm consisting of 5 drum sounds, followed by a short pause. Then, you will hear another interval with 2 drum sounds.</p>' +
+          '<p>Your task is to decide whether this final interval is longer or shorter than the intervals making up the rhythm.</p>' +
+          '<p><br>If the final interval is LONGER, press L key.<br>If it is SHORTER, press S key.</p>' +
+          '<p><br>You should press the key as fast as possible! Note that timing of the key presses will be checked and you may get banned if you wait too long to respond!</p>'+
+          '<p><br>Please do not count, and do not get help from any movement in your body while doing this task.</p>',
+
+          // ___________________ picture ___________________
+          '<div style="width: 90%; height: 90%; display: inline; justify-content: center; padding: 20px 10px 10px 10px;">' +
+          '<img src="oplma_taskpic.png" style="width: 100%; height: 100%; text-align: center; border-style: dotted;" ></img>' +
+          '</div>'+
+          '<p>Here is a graphical representation of one trial: You will first hear the drum sounds, then respond on the keyboard as fast as possible. The end of the trial will be signaled by a screen color change. </p>' +
+          '<p><br>If you understood the task, please click "next" to proceed to the examples section. You can not go back to the current section once you proceed.</p>'
+        ],
+
+        show_clickable_nav: true
+      };
+
+      var ex_stim_dir = [];
+      var example_trials = {
+        timeline: [
+          { // present stim
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: jsPsych.NO_KEYS,
+            prompt: "<p> + </p>",
+            post_trial_gap: 500,
+            response_ends_trial: false,
+            trial_ends_after_audio: true,
+            on_finish: function(data) {
+              if (data.stimulus.includes('-')){
+                ex_stim_dir = -1;
+              } else {
+                ex_stim_dir = 1;
+              }
+              // console.log(ex_stim_dir);
+            },
+          },
+            { // show key resp
+              type: 'image-keyboard-response',
+              stimulus: '',
+              choices: jsPsych.NO_KEYS,
+              on_start: function(trial) {
+                if (ex_stim_dir < 0 ) { //stim shorter
+                  trial.stimulus = 'key_S.png';
+                  trial.prompt = '<br>Press S key when the final interval is SHORTER than the ones making up the rhythm.'
+                  trial.choices = ['s'];
+                };
+                if (ex_stim_dir > 0 ) { //stim shorter
+                  trial.stimulus = 'key_L.png'
+                  trial.prompt = '<br>Press L key when the final interval is LONGER than the ones making up the rhythm.'
+                  trial.choices = ['l'];
+                };
+                ex_stim_dir = [];
+              },
+            }],
+            timeline_variables: curr_examps,
+            randomize_order: false,
+          }
+
+      // Practice trials #2 --------------------------------------------------------------------------------------------------------------
+      var feedback_text = [];
+      var prac_2_correct = 0;
+      var practice_procedure_2 = {
+            timeline: [{
+                type: 'audio-keyboard-response',
+                stimulus: jsPsych.timelineVariable('stimulus'),
+                choices: ['s', 'l'],
+                prompt: "<p> + </p>",
+                post_trial_gap: 500,
+                response_ends_trial: true,
+                trial_ends_after_audio: false,
+                response_allowed_while_playing: false,
+                on_finish: function(data) {
+
+                  var curr_stim_dir = [];
+                  if (data.stimulus.includes('-')){
+                    curr_stim_dir = -1;
+                  } else {
+                    curr_stim_dir = 1;
+                  };
+
+                  if (data.response === "l" && curr_stim_dir < 0) {
+                    // 'L' key & neg deviation = incorrect resp
+                    feedback_text.push('The latter interval was shorter than the previous intervals. <br>Your response was incorrect. <br><br>');
+                  };
+                  if (data.response === "l" && curr_stim_dir > 0) {
+                    // 'L' key & pos deviation = incorrect resp
+                    feedback_text.push('<br>Your response was correct. <br><br>');
+                    prac_2_correct++;
+                  };
+                  if (data.response === "s" && curr_stim_dir > 0) {
+                    // 'S' key & pos deviation = incorrect resp
+                    feedback_text.push('The latter interval was longer than the previous intervals. <br>Your response was incorrect. <br><br>');
+                  };
+                  if (data.response === "s" && curr_stim_dir < 0) {
+                    // 'S' key & neg deviation = incorrect resp
+                    feedback_text.push('<br>Your response was correct. <br><br>');
+                    prac_2_correct++;
+                  };
+
+                  if (data.rt > maxRTallowed) {
+                    feedback_text.push('<br>You were too late to respond. Please press the keys as fast as possible, after the sounds end. <br><br>');
+                  };
+
+                } // on_finish: function
+              }, // trial timeline part 1 }
+
+              { // { intertrial intv
+                type: 'html-keyboard-response-ITI', // from old js
+                stimulus: '+',
+                trial_duration: 500,
+                choices: jsPsych.NO_KEYS
+              }, // intertrial intv }
+
+              { // { feedback text
+                type: 'html-button-response',
+                on_start: function(trial) {
+                  trial.stimulus = feedback_text;
+                  feedback_text = [];
+                },
+                stimulus: '+',
+                choices: ['OK']
+              }, // feedback text }
+
+            ], //.. timeline }
+
+            timeline_variables: curr_prac_2,
+            randomize_order: false,
+            on_finish: function() {
+              if (prac_2_correct < 4) {
+                timeVar.push(youfailed);
+              }
+            }
+      } // practice_procedure 2 end
+
+      // Practice trials #1 --------------------------------------------------------------------------------------------------------------
+      var practice_start = {
+        type: 'html-button-response',
+        post_trial_gap: 500,
+        stimulus: '<p style="font-size:30px;">PRACTICE</p>' +
+          '<p>You have completed the instructions. In the following section, you will practice the task for at least 6 trials. </p>' +
+          '<p>At the end of each trial, you will be given feedback regarding your responses.</p>' +
+          '<p>When you are ready, please click the button below to proceed to the practice section</p>',
+        choices: ['Start section'],
+      };
+
+      var feedback_text = [];
+      var prac_1_correct = 0;
+      var practice_procedure = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            post_trial_gap: 500,
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+
+              var curr_stim_dir = [];
+              if (data.stimulus.includes('-')){
+                curr_stim_dir = -1;
+              } else {
+                curr_stim_dir = 1;
+              };
+
+              if (data.response === "l" && curr_stim_dir < 0) {
+                // 'L' key & neg deviation = incorrect resp
+                feedback_text.push('The latter interval was shorter than the previous intervals. <br>Your response was incorrect. <br><br>');
+              };
+              if (data.response === "l" && curr_stim_dir > 0) {
+                // 'L' key & pos deviation = incorrect resp
+                feedback_text.push('<br>Your response was correct. <br><br>');
+                prac_1_correct++;
+              };
+              if (data.response === "s" && curr_stim_dir > 0) {
+                // 'S' key & pos deviation = incorrect resp
+                feedback_text.push('The latter interval was longer than the previous intervals. <br>Your response was incorrect. <br><br>');
+              };
+              if (data.response === "s" && curr_stim_dir < 0) {
+                // 'S' key & neg deviation = incorrect resp
+                feedback_text.push('<br>Your response was correct. <br><br>');
+                prac_1_correct++;
+              };
+
+              if (data.rt > maxRTallowed) {
+                feedback_text.push('<br>You were too late to respond. Please press the keys as fast as possible, after the sounds end. <br><br>');
+              };
+
+            } // on_finish: function
+          }, // trial timeline part 1 }
+
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: 500,
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+
+          { // { feedback text
+            type: 'html-button-response',
+            on_start: function(trial) {
+              trial.stimulus = feedback_text;
+              feedback_text = [];
+            },
+            stimulus: '+',
+            choices: ['OK']
+          }, // feedback text }
+
+        ], //.. timeline }
+
+        timeline_variables: curr_prac_1,
+        randomize_order: false,
+        on_finish: function() {
+          if (prac_1_correct < 4) {
+            timeVar.push(practice_procedure_2)
+          }
+        }
+      } // practice_procedure 1 end
+
+      // Test TRIALS -----------------------------------------------------------------------------------------------------------------------------------
+      var trialstart = {
+        type: 'html-button-response',
+        post_trial_gap: 500,
+        stimulus: '<p style="font-size:30px;">THE EXPERIMENT</p>' +
+          '<p>You have completed the practice section. In the following section, the pacing will be automated, and no feedback will be given. </p>' +
+          '<p>Also, the task will be harder than the practice section. If you can not decide about the duration of the final interval, select the option which feels like the correct answer. </p>' +
+          '<p>This whole section is expected to take 70 minutes in total. It will be divided into 8 parts, each of which should take no more than 9 minutes. It is important that you keep concentrated between the breaks.</p>' +
+          '<p style="color:#FF0000";>Please keep in mind that you should not change the sound volume after this point, until the end of the experiment!</p>' +
+          '<p>When you are ready, please click the button below to proceed to the experimental section</p>',
+        choices: ['Start section'],
+        on_start: function() {
+          rt_control = 0;
+        },
+      };
+      var trials_1 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt1,
+        randomize_order: false,
+      } // trials_1 end
+      var trials_2 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt2,
+        randomize_order: false,
+      } // trials_1 end
+      var trials_3 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt3,
+        randomize_order: false,
+      } // trials_1 end
+      var trials_4 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt4,
+        randomize_order: false,
+      } // trials_1 end
+      var trials_5 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt5,
+        randomize_order: false,
+      } // trials_1 end
+      var trials_6 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt6,
+        randomize_order: false,
+      } // trials_6 end
+      var trials_7 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt7,
+        randomize_order: false,
+      } // trials_7 end
+      var trials_8 = {
+        timeline: [{
+            type: 'audio-keyboard-response',
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['s', 'l'],
+            prompt: "<p> + </p>",
+            response_ends_trial: true,
+            trial_ends_after_audio: false,
+            response_allowed_while_playing: false,
+            on_finish: function(data) {
+              if (data.rt > maxRTallowed) {
+                rt_control++;
+                console.log(rt_control);
+              };
+              if (rt_control > 3) {
+                timeVar.push(youfailed);
+                jsPsych.endCurrentTimeline();
+              };
+            } // on_finish: function
+          }, // trial timeline part 1 }
+          { // { intertrial intv
+            type: 'html-keyboard-response-ITI', // from old js
+            stimulus: '+',
+            trial_duration: jsPsych.timelineVariable('iti'),
+            choices: jsPsych.NO_KEYS
+          }, // intertrial intv }
+        ], //.. timeline }
+        timeline_variables: timeline_pt8,
+        randomize_order: false,
+      } // trials_8 end
+
+      // PROCEDURE =============================================================
+
+      timeVar.push(preload)
+      timeVar.push(id_check)
+      timeVar.push({
+          type: 'fullscreen',
+          fullscreen_mode: true
+        });
+      timeVar.push(helloo);
+
+      timeVar.push(SMT_procedure);
+      timeVar.push(sectDone);
+
+      timeVar.push(instrucPages);
+      timeVar.push(form_trial);
+
+      timeVar.push(practice_start);
+      timeVar.push(practice_procedure);
+
+      timeVar.push(trialstart);
+      timeVar.push(trials_1);
+      timeVar.push(break_trial);
+      timeVar.push(trials_2);
+      timeVar.push(break_trial);
+      timeVar.push(trials_3);
+      timeVar.push(break_trial);
+      timeVar.push(trials_4);
+      timeVar.push(break_trial);
+      timeVar.push(trials_5);
+      timeVar.push(break_trial);
+      timeVar.push(trials_6);
+      timeVar.push(break_trial);
+      timeVar.push(trials_7);
+      timeVar.push(break_trial);
+      timeVar.push(trials_8);
+
+      timeVar.push(sectDone);
+      timeVar.push(SMT_repeat);
+      timeVar.push(thxbye);
+
+      // EXPERIMENT INIT =======================================================
+      jsPsych.init({
+        timeline: timeVar,
+        default_iti: 550,
+        use_webaudio: false,
+        on_close: function(event) {
+
+          var filename_base = 'OPLMA_pt_';
+          filename = filename_base.concat(pt_index.toString(), '_closed.csv');
+          var resultCSV = jsPsych.data.get().csv();
+          jatos.uploadResultFile(resultCSV, filename);
+
+          event.preventDefault();
+          event.returnValue = '';
+        },
+
+        on_finish: function() {
+          var filename_base = 'OPLMA_pt_';
+
+          var resultCSV = jsPsych.data.get().csv();
+          filename = filename_base.concat(pt_index.toString(), '_fin.csv');
+          jatos.uploadResultFile(resultCSV, filename);
+
+          var interaction_data = jsPsych.data.getInteractionData();
+          interacfilename = filename_base.concat(pt_index.toString(), '_interac.csv');
+          jatos.uploadResultFile(interaction_data, interacfilename);
+
+          jatos.endStudyAjax().then(() => {
+          // Change this URL to the one you see in Prolific
+          window.location.href = 'https://app.prolific.co/submissions/complete?cc=8ABFD51D'
+          });
+
+        },
+      })
+    } // end of init_experiment function
+    // (set up variables + initiate experiment)
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    // JATOS STUFF (get participant code and run init_experiment accordingly)
+    // ! init_experiment is defined above but runs after these lines !!!!
+
+    // Extract url var (here prolific_id)
+    var prolific_id = jatos.urlQueryParameters.prolific_id
+
+    if (prolific_id) {
+
+      // IF existing ID
+      if (jatos.batchSession.find('/' + prolific_id)) {
+        init_experiment();
+
+        // IF new ID
+      } else {
+
+        // count existing participants
+        var batchSession = jatos.batchSession.getAll();
+        var pt_index = Object.keys(batchSession).length;
+
+        // add new ID to session data
+        var promise = jatos.batchSession.add('/' + prolific_id, pt_index);
+        // if added, start experiment
+        promise.done(() => {
+          init_experiment();
+        });
+      }
+    } else {
+      alert('No prolific ID found! please contact us!')
+      jatos.abortStudy();
+    }
+
+  });
+</script>
+
+</html>

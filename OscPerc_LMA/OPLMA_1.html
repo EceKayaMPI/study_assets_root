@@ -37,7 +37,7 @@ function playVol(audio) {
 
       var prolific_id = jatos.urlQueryParameters.prolific_id;
       var pt_index = jatos.batchSession.get(prolific_id);
-      var curr_audio_files = oplma_PID[pt_index].audio_files;
+      var curr_audio_files = oplma_PID[0].audio_files;
       // console.log(curr_audio_files);
 
       var preload = {
@@ -52,7 +52,7 @@ function playVol(audio) {
       var rt_control = 0;
       var maxRTallowed = 10000; // 10 seconds
 
-      var current_participant = oplma_PID[pt_index];
+      var current_participant = oplma_PID[0];
       var timeline_pt1 = current_participant.timevars_1;
       var timeline_pt2 = current_participant.timevars_2;
       var timeline_pt3 = current_participant.timevars_3;
@@ -70,7 +70,8 @@ function playVol(audio) {
       var participant_info = [];
       participant_info.pro_ID = prolific_id;
       participant_info.pt_index = pt_index;
-      console.log(pt_index);
+      // console.log(pt_index);
+      // console.log(timeline_pt8);
 
       // TRIALS ==================================================================
 
